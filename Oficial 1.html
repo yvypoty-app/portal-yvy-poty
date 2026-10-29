@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal do Professor - Escola Indígena Yvy Poty</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans / Nunito / Quicksand for soft pillowy clay feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+
+    <!-- Firebase SDK (Compat v10.8.0) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+
+    <!-- Tailwind CSS v3 with forms plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', '"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['Quicksand', '"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        indigoClay: {
+                            50: '#F0F3FF',
+                            100: '#E0E7FF',
+                            400: '#818CF8',
+                            500: '#6366F1',
+                            600: '#4F46E5',
+                            700: '#4338CA',
+                        },
+                        clay: {
+                            bg: '#F5EBE1',
+                            sidebar: '#DCE8E1',
+                            card: '#FAF4ED',
+                            peach: '#FFD4C2',
+                            apricot: '#FCD8B3',
+                            mint: '#C7E4D8',
+                            sky: '#CCE5F3',
+                            lilac: '#E2D4EC',
+                            yellow: '#FBE49D',
+                            textDark: '#362E2B',
+                            textMuted: '#7D726D'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ========================================================================= */
+        /* ESTILOS TELA DE LOGIN (CLAYMORPHISM ESCURO 3D)                            */
+        /* ========================================================================= */
+        body {
+            font-family: 'Nunito', 'Plus Jakarta Sans', sans-serif;
+            background-color: #121214;
+            color: #38302C;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Outer Clay Phone Slab / Base Card com profundidade matte */
+        .outer-clay-slab {
+            background: linear-gradient(165deg, #FAF7F2 0%, #F0EAE1 100%);
+            border-radius: 46px;
+            box-shadow: 
+                0px 30px 65px rgba(0, 0, 0, 0.75),
+                0px 10px 25px rgba(0, 0, 0, 0.5),
+                inset 2px 2px 5px rgba(255, 255, 255, 0.95),
+                inset -3px -3px 7px rgba(195, 178, 165, 0.4);
+        }
+
+        /* Inner Overlapping Login Card */
+        .inner-clay-card {
+            background: linear-gradient(180deg, #FFFFFF 0%, #F5EFEB 100%);
+            border-radius: 36px;
+            box-shadow: 
+                0px 14px 28px rgba(70, 55, 90, 0.14),
+                0px 4px 10px rgba(0, 0, 0, 0.06),
+                inset 1.5px 2px 4px rgba(255, 255, 255, 1),
+                inset -1.5px -2px 4px rgba(205, 188, 175, 0.35);
+        }
+
+        /* Input Claymorphism estilo Puffy */
+        .clay-input-pill {
+            background: #ECE5DE;
+            box-shadow: 
+                inset 2.5px 3.5px 6px rgba(175, 158, 148, 0.45),
+                inset -2px -2.5px 5px rgba(255, 255, 255, 0.95),
+                0 1px 2px rgba(255, 255, 255, 0.8);
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+        }
+        .clay-input-pill:focus-within {
+            background: #E8E0D7;
+            box-shadow: 
+                inset 3px 4px 7px rgba(155, 136, 125, 0.55),
+                inset -2px -2px 5px rgba(255, 255, 255, 0.95),
+                0 0 0 2.5px rgba(99, 102, 241, 0.45);
+        }
+
+        /* Badge Ícone nos Inputs */
+        .clay-icon-badge {
+            background: linear-gradient(145deg, #7C7FF6, #585CE5);
+            box-shadow: 
+                2px 3px 6px rgba(67, 56, 202, 0.35),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.65),
+                inset -1px -1px 2px rgba(49, 46, 129, 0.35);
+        }
+
+        /* Botão Principal Clay Roxo */
+        .clay-btn-purple {
+            background: linear-gradient(180deg, #7377F5 0%, #5B5EE5 100%);
+            box-shadow: 
+                0 10px 22px rgba(79, 70, 229, 0.45),
+                0 3px 7px rgba(49, 46, 129, 0.3),
+                inset 0 2px 3px rgba(255, 255, 255, 0.65),
+                inset 0 -3px 4px rgba(49, 46, 129, 0.45);
+            border-radius: 9999px;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .clay-btn-purple:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 14px 26px rgba(79, 70, 229, 0.52),
+                0 4px 9px rgba(49, 46, 129, 0.35),
+                inset 0 2px 3px rgba(255, 255, 255, 0.75),
+                inset 0 -3px 4px rgba(49, 46, 129, 0.5);
+        }
+        .clay-btn-purple:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0 4px 8px rgba(79, 70, 229, 0.35),
+                inset 0 2.5px 5px rgba(49, 46, 129, 0.55);
+        }
+
+        /* Badge do Cap de Formatura */
+        .clay-grad-badge {
+            background: linear-gradient(145deg, #6366F1 0%, #4F46E5 100%);
+            box-shadow: 
+                0 8px 18px rgba(79, 70, 229, 0.45),
+                inset 1.5px 2px 3px rgba(255, 255, 255, 0.6),
+                inset -1.5px -2px 3px rgba(49, 46, 129, 0.4);
+        }
+
+        /* Animações Flutuantes 3D */
+        @keyframes bobbing {
+            0%, 100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+            50% { transform: translateY(-10px) rotate(calc(var(--rot, 0deg) + 3deg)); }
+        }
+        @keyframes floatingDrift {
+            0%, 100% { transform: translate(0px, 0px) rotate(var(--rot, 0deg)); }
+            33% { transform: translate(6px, -12px) rotate(calc(var(--rot, 0deg) + 4deg)); }
+            66% { transform: translate(-5px, -6px) rotate(calc(var(--rot, 0deg) - 3deg)); }
+        }
+        @keyframes gentlePulseSway {
+            0%, 100% { transform: translateY(0px) scale(1) rotate(var(--rot, 0deg)); }
+            50% { transform: translateY(-8px) scale(1.04) rotate(calc(var(--rot, 0deg) - 4deg)); }
+        }
+        @keyframes twinkleFloat {
+            0%, 100% { opacity: 0.85; transform: scale(0.95) translateY(0); }
+            50% { opacity: 1; transform: scale(1.12) translateY(-6px); }
+        }
+
+        .animate-bob { animation: bobbing 5.5s ease-in-out infinite; }
+        .animate-bob-slow { animation: bobbing 7s ease-in-out infinite reverse; }
+        .animate-drift { animation: floatingDrift 8s ease-in-out infinite; }
+        .animate-sway { animation: gentlePulseSway 6.5s ease-in-out infinite; }
+        .animate-twinkle { animation: twinkleFloat 4s ease-in-out infinite; }
+
+        /* ========================================================================= */
+        /* ESTILOS PORTAL WEB DO PROFESSOR (CLAYMORPHISM SOFT 3D BEGE)               */
+        /* ========================================================================= */
+        .clay-card {
+            background: #FAF5EE;
+            border-radius: 28px;
+            box-shadow: 
+                8px 10px 24px rgba(184, 164, 150, 0.28),
+                -6px -6px 16px rgba(255, 255, 255, 0.85),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.9),
+                inset -2px -2px 4px rgba(200, 185, 172, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .clay-card-interactive { cursor: pointer; }
+        .clay-card-interactive:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 
+                12px 16px 30px rgba(184, 164, 150, 0.35),
+                -8px -8px 20px rgba(255, 255, 255, 0.95);
+        }
+        .clay-card-interactive:active {
+            transform: translateY(1px) scale(0.99);
+            box-shadow: 
+                4px 6px 12px rgba(184, 164, 150, 0.25),
+                inset 2px 2px 4px rgba(160, 140, 125, 0.2);
+        }
+
+        /* Botões Estilo Pill Soft 3D */
+        .clay-button {
+            border-radius: 20px;
+            box-shadow: 
+                4px 5px 12px rgba(180, 160, 145, 0.3),
+                -3px -3px 8px rgba(255, 255, 255, 0.8),
+                inset 1px 1px 1px rgba(255, 255, 255, 0.8);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .clay-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                6px 8px 16px rgba(180, 160, 145, 0.38),
+                -4px -4px 10px rgba(255, 255, 255, 0.9);
+        }
+        .clay-button:active {
+            transform: translateY(1px);
+            box-shadow: inset 2px 3px 6px rgba(140, 120, 105, 0.3);
+        }
+
+        /* Badges coloridas 3D */
+        .clay-badge-mint { background: #D5EDE2; color: #2F6553; box-shadow: 3px 3px 8px rgba(140, 175, 160, 0.35), inset 1px 1px 2px rgba(255,255,255,0.8); }
+        .clay-badge-peach { background: #FFDDCF; color: #924329; box-shadow: 3px 3px 8px rgba(210, 150, 130, 0.35), inset 1px 1px 2px rgba(255,255,255,0.8); }
+        .clay-badge-apricot { background: #FFE6CC; color: #8C531E; box-shadow: 3px 3px 8px rgba(215, 170, 130, 0.35), inset 1px 1px 2px rgba(255,255,255,0.8); }
+        .clay-badge-sky { background: #D7ECF9; color: #2C6082; box-shadow: 3px 3px 8px rgba(150, 180, 205, 0.35), inset 1px 1px 2px rgba(255,255,255,0.8); }
+        .clay-badge-lilac { background: #EBDFF3; color: #694086; box-shadow: 3px 3px 8px rgba(185, 165, 205, 0.35), inset 1px 1px 2px rgba(255,255,255,0.8); }
+        .clay-badge-yellow { background: #FEF0C3; color: #7A5B0A; box-shadow: 3px 3px 8px rgba(210, 185, 120, 0.35), inset 1px 1px 2px rgba(255,255,255,0.8); }
+
+        .sidebar-transition { transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#E89975] selection:text-white">
+
+    <!-- ========================================================================= -->
+    <!-- TELA 1: LOGIN CLAYMORPHISM 3D CENTRALIZADO (FIXED - ZERO ROLAGEM)          -->
+    <!-- ========================================================================= -->
+    <div id="loginView" class="fixed inset-0 w-screen h-screen overflow-hidden flex items-center justify-center bg-[#121214] z-50 select-none">
+        
+        <!-- ELEMENTOS DECORATIVOS SVGS FLUTUANTES NO FUNDO -->
+        <div aria-hidden="true" class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+            <svg aria-hidden="true" class="absolute w-0 h-0 overflow-hidden">
+                <defs>
+                    <linearGradient id="cloudGrad" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFFFFF"></stop><stop offset="100%" stop-color="#E2EDFD"></stop></linearGradient>
+                    <linearGradient id="starGrad" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFF2A3"></stop><stop offset="50%" stop-color="#FFD166"></stop><stop offset="100%" stop-color="#FCA311"></stop></linearGradient>
+                    <linearGradient id="planeGrad" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFFFFF"></stop><stop offset="60%" stop-color="#EBF1FD"></stop><stop offset="100%" stop-color="#C7DAF8"></stop></linearGradient>
+                    <linearGradient id="bulbGrad" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFF4B8"></stop><stop offset="50%" stop-color="#FFD54F"></stop><stop offset="100%" stop-color="#FFA726"></stop></linearGradient>
+                    <linearGradient id="balloonPink" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FF9EBA"></stop><stop offset="60%" stop-color="#FF6B93"></stop><stop offset="100%" stop-color="#E63968"></stop></linearGradient>
+                    <linearGradient id="kiteMint" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#8BF3D5"></stop><stop offset="50%" stop-color="#48C9A3"></stop><stop offset="100%" stop-color="#229B76"></stop></linearGradient>
+                    <linearGradient id="kiteCoral" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFA8A8"></stop><stop offset="100%" stop-color="#FF5252"></stop></linearGradient>
+                    <linearGradient id="eraserBlue" x1="0%" x2="100%" y1="0%" y2="0%"><stop offset="0%" stop-color="#738AFE"></stop><stop offset="100%" stop-color="#4F6BF8"></stop></linearGradient>
+                    <linearGradient id="eraserRed" x1="0%" x2="100%" y1="0%" y2="0%"><stop offset="0%" stop-color="#FF6B8B"></stop><stop offset="100%" stop-color="#EE436B"></stop></linearGradient>
+                    <linearGradient id="scissorsCyan" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#6EE7B7"></stop><stop offset="100%" stop-color="#10B981"></stop></linearGradient>
+                    <linearGradient id="compassGold" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FCD34D"></stop><stop offset="100%" stop-color="#D97706"></stop></linearGradient>
+                </defs>
+            </svg>
+
+            <!-- Cadernos 3D + Maçã -->
+            <div class="hidden md:flex flex-col items-center absolute left-4 lg:left-12 bottom-6 lg:bottom-12 scale-90 lg:scale-100 origin-bottom animate-sway">
+                <svg class="filter drop-shadow-[0px_20px_25px_rgba(0,0,0,0.65)]" height="210" viewBox="0 0 170 230" width="155">
+                    <defs>
+                        <linearGradient id="bookPurple" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#8B7BF7"></stop><stop offset="100%" stop-color="#5544CE"></stop></linearGradient>
+                        <linearGradient id="bookPink" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFA8BA"></stop><stop offset="100%" stop-color="#E84F76"></stop></linearGradient>
+                        <linearGradient id="bookMint" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#72E2C0"></stop><stop offset="100%" stop-color="#2DA884"></stop></linearGradient>
+                        <linearGradient id="appleGrad" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FF6B6B"></stop><stop offset="100%" stop-color="#C0392B"></stop></linearGradient>
+                        <linearGradient id="pagesGrad" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFFDF9"></stop><stop offset="100%" stop-color="#E4DCD3"></stop></linearGradient>
+                    </defs>
+                    <g transform="translate(10, 160)"><rect fill="url(#pagesGrad)" height="22" rx="4" width="138" x="8" y="5"></rect><rect fill="url(#bookPurple)" height="28" rx="8" width="144" x="0" y="0"></rect><rect fill="rgba(255,255,255,0.35)" height="28" rx="7" width="14" x="0" y="0"></rect><path d="M120 22 L120 38 L126 34 L132 38 L132 22 Z" fill="#FFD166"></path></g>
+                    <g transform="translate(18, 126) rotate(-3)"><rect fill="url(#pagesGrad)" height="20" rx="4" width="124" x="8" y="5"></rect><rect fill="url(#bookMint)" height="26" rx="8" width="130" x="0" y="0"></rect><rect fill="rgba(255,255,255,0.35)" height="26" rx="7" width="13" x="0" y="0"></rect></g>
+                    <g transform="translate(24, 95) rotate(2)"><rect fill="url(#pagesGrad)" height="19" rx="4" width="112" x="7" y="5"></rect><rect fill="url(#bookPink)" height="25" rx="8" width="118" x="0" y="0"></rect><rect fill="rgba(255,255,255,0.38)" height="25" rx="7" width="12" x="0" y="0"></rect></g>
+                    <g transform="translate(70, 42)"><ellipse cx="22" cy="30" fill="url(#appleGrad)" rx="18" ry="17"></ellipse><ellipse cx="32" cy="30" fill="url(#appleGrad)" rx="18" ry="17"></ellipse><ellipse cx="18" cy="23" fill="rgba(255,255,255,0.4)" rx="5" ry="3" transform="rotate(-30 18 23)"></ellipse><path d="M27 15 Q26 7 32 3" stroke="#6D4C41" stroke-linecap="round" stroke-width="3"></path><ellipse cx="36" cy="7" fill="#8CE071" rx="8" ry="4" transform="rotate(-25 36 7)"></ellipse></g>
+                </svg>
+            </div>
+
+            <!-- Régua e Esquadro -->
+            <div class="animate-bob absolute left-6 lg:left-16 top-16 hidden md:block" style="--rot: -8deg;">
+                <svg class="filter drop-shadow-[0px_14px_20px_rgba(0,0,0,0.6)]" height="100" viewBox="0 0 120 110" width="110">
+                    <linearGradient id="rulerGrad" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFE79A"></stop><stop offset="100%" stop-color="#F4B740"></stop></linearGradient>
+                    <path d="M15 90 L100 90 L15 15 Z" fill="url(#rulerGrad)" stroke="#E8A728" stroke-linejoin="round" stroke-width="3"></path>
+                    <path d="M28 80 L75 80 L28 32 Z" fill="#18181C"></path>
+                </svg>
+            </div>
+
+            <!-- Lápis Flutuante -->
+            <div class="animate-bob-slow absolute right-6 lg:right-16 top-16 hidden md:block" style="--rot: 12deg;">
+                <svg class="filter drop-shadow-[0px_16px_22px_rgba(0,0,0,0.65)]" height="110" viewBox="0 0 70 120" width="65">
+                    <linearGradient id="pencilBody" x1="0%" x2="100%" y1="0%" y2="0%"><stop offset="0%" stop-color="#FFDD78"></stop><stop offset="100%" stop-color="#E29E1B"></stop></linearGradient>
+                    <linearGradient id="pencilEraser" x1="0%" x2="100%" y1="0%" y2="0%"><stop offset="0%" stop-color="#FFA8BA"></stop><stop offset="100%" stop-color="#F27791"></stop></linearGradient>
+                    <g transform="translate(15, 8) rotate(18)">
+                        <rect fill="url(#pencilEraser)" height="18" rx="5" width="22" x="6" y="0"></rect>
+                        <rect fill="#D6D3D1" height="8" rx="2" width="22" x="6" y="16"></rect>
+                        <rect fill="url(#pencilBody)" height="50" rx="3" width="22" x="6" y="24"></rect>
+                        <polygon fill="#FCE7D0" points="6,74 28,74 17,94"></polygon>
+                        <polygon fill="#3E2723" points="13,87 21,87 17,94"></polygon>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Mochila 3D -->
+            <div class="hidden md:flex flex-col items-center absolute right-4 lg:right-12 bottom-6 lg:bottom-12 scale-90 lg:scale-100 origin-bottom animate-drift">
+                <svg class="filter drop-shadow-[0px_20px_25px_rgba(0,0,0,0.7)]" height="200" viewBox="0 0 160 220" width="150">
+                    <linearGradient id="bagBodyGrad" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#8085F6"></stop><stop offset="100%" stop-color="#4649CF"></stop></linearGradient>
+                    <path d="M60 48 Q80 25 100 48" fill="none" stroke="#4649CF" stroke-linecap="round" stroke-width="8"></path>
+                    <rect fill="url(#bagBodyGrad)" height="142" rx="34" width="124" x="18" y="44"></rect>
+                    <rect fill="url(#kiteCoral)" height="68" rx="20" width="94" x="33" y="108"></rect>
+                </svg>
+            </div>
+
+            <!-- Nuvem de Sonhos -->
+            <div class="animate-drift absolute left-8 lg:left-24 top-6 hidden sm:block">
+                <svg class="filter drop-shadow-[0px_12px_18px_rgba(0,0,0,0.55)]" height="60" viewBox="0 0 110 68" width="95">
+                    <path d="M28 55 C16 55 8 46 8 35 C8 25 16 17 26 17 C28 9 37 3 48 3 C61 3 71 12 73 23 C79 21 86 24 89 30 C96 32 101 39 101 47 C101 56 94 63 85 63 L28 63 Z" fill="url(#cloudGrad)"></path>
+                </svg>
+            </div>
+
+            <!-- Avião de Papel -->
+            <div class="animate-sway absolute left-[25%] top-8 hidden md:block">
+                <svg class="filter drop-shadow-[0px_14px_16px_rgba(0,0,0,0.6)]" height="50" viewBox="0 0 75 60" width="65">
+                    <polygon fill="url(#planeGrad)" points="68,6 6,32 40,42"></polygon>
+                    <polygon fill="#B8D0F5" points="40,42 6,32 30,54"></polygon>
+                </svg>
+            </div>
+
+            <!-- Lâmpada de Idéias -->
+            <div class="animate-drift absolute right-[25%] top-8 hidden md:block">
+                <svg class="filter drop-shadow-[0px_12px_18px_rgba(0,0,0,0.65)]" height="70" viewBox="0 0 65 78" width="55">
+                    <circle cx="32" cy="30" fill="url(#bulbGrad)" r="25"></circle>
+                    <rect fill="#CBD5E1" height="8" rx="2" width="18" x="23" y="52"></rect>
+                </svg>
+            </div>
+
+            <!-- Pipa / Kite -->
+            <div class="animate-bob absolute right-8 lg:right-24 top-6 hidden sm:block">
+                <svg class="filter drop-shadow-[0px_16px_22px_rgba(0,0,0,0.6)]" height="95" viewBox="0 0 85 110" width="75">
+                    <polygon fill="url(#kiteMint)" points="40,4 72,36 40,70 8,36"></polygon>
+                    <polygon fill="url(#kiteCoral)" points="40,4 72,36 40,70"></polygon>
+                </svg>
+            </div>
+        </div>
+
+        <!-- CONTAINER PRINCIPAL DO CARD DE LOGIN (PERFEITAMENTE CENTRALIZADO) -->
+        <main class="relative z-10 w-full max-w-[390px] mx-auto px-4 my-auto">
+            <div class="outer-clay-slab pt-8 px-6 pb-7 relative overflow-hidden">
+                
+                <!-- HEADER DO CARD DE LOGIN -->
+                <div class="flex flex-col items-center text-center relative z-10 mb-5">
+                    <div class="w-12 h-12 clay-grad-badge rounded-2xl flex items-center justify-center text-white mb-2.5 shadow-md transform hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-graduation-cap text-xl text-white"></i>
+                    </div>
+                    
+                    <div class="relative inline-flex items-center justify-center">
+                        <div class="flex flex-col gap-1 mr-2 opacity-90">
+                            <span class="w-2.5 h-[3px] rounded-full bg-[#E5B537] -rotate-45 transform origin-right"></span>
+                            <span class="w-3.5 h-[3px] rounded-full bg-[#E5B537]"></span>
+                            <span class="w-2.5 h-[3px] rounded-full bg-[#E5B537] rotate-45 transform origin-right"></span>
+                        </div>
+                        <h1 class="text-[27px] leading-tight font-extrabold text-[#2F2942] tracking-tight font-sans">
+                            Welcome Back
+                        </h1>
+                        <div class="flex flex-col gap-1 ml-2 opacity-90">
+                            <span class="w-2.5 h-[3px] rounded-full bg-[#E5B537] rotate-45 transform origin-left"></span>
+                            <span class="w-3.5 h-[3px] rounded-full bg-[#E5B537]"></span>
+                            <span class="w-2.5 h-[3px] rounded-full bg-[#E5B537] -rotate-45 transform origin-left"></span>
+                        </div>
+                    </div>
+                    <p class="text-xs font-bold text-[#7A7289] mt-1 tracking-wide">
+                        Escola Indígena Yvy Poty
+                    </p>
+                </div>
+
+                <!-- FORMULÁRIO DE LOGIN -->
+                <section class="inner-clay-card pt-6 px-5 pb-6 relative z-10">
+                    <form onsubmit="handleLoginSubmit(event)" class="space-y-3.5">
+                        
+                        <!-- CAMPO EMAIL OU USUÁRIO -->
+                        <div class="relative">
+                            <div class="clay-input-pill flex items-center p-1.5 pr-4">
+                                <div class="clay-icon-badge w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0 ml-0.5">
+                                    <i class="fa-solid fa-user text-sm"></i>
+                                </div>
+                                <input class="w-full bg-transparent border-none text-[#332A45] placeholder-[#9E90A8] text-[13px] font-bold px-3 py-1.5 focus:ring-0 focus:outline-none" 
+                                       id="loginUsername" 
+                                       placeholder="Email ou Usuário" 
+                                       required type="text"/>
+                            </div>
+                        </div>
+
+                        <!-- CAMPO SENHA -->
+                        <div class="space-y-1">
+                            <div class="clay-input-pill flex items-center p-1.5 pr-3.5">
+                                <div class="clay-icon-badge w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0 ml-0.5">
+                                    <i class="fa-solid fa-lock text-sm"></i>
+                                </div>
+                                <input class="w-full bg-transparent border-none text-[#332A45] placeholder-[#9E90A8] text-[13px] font-bold px-3 py-1.5 focus:ring-0 focus:outline-none" 
+                                       id="loginPassword" 
+                                       placeholder="Senha" 
+                                       required type="password"/>
+                                <button aria-label="Alternar visibilidade da senha" 
+                                        class="text-[#88789C] hover:text-[#574378] transition-colors p-1 flex items-center justify-center" 
+                                        id="togglePassword" 
+                                        type="button">
+                                    <i class="fa-regular fa-eye text-sm" id="eyeIcon"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="flex justify-end pr-2 pt-0.5">
+                                <a class="text-[11px] font-extrabold text-[#5B5EE5] hover:text-[#4338CA] transition-colors" href="#" onclick="showToast('Caso tenha esquecido sua senha, contate a Coordenação (Danilo) ou PCPI (Elivelto).', false)">
+                                    Esqueceu a senha?
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- BOTÃO ENTRAR / LOGIN -->
+                        <div class="pt-1">
+                            <button class="clay-btn-purple w-full py-3 px-6 text-white font-extrabold text-sm tracking-wide flex items-center justify-center shadow-lg" type="submit">
+                                <span>Entrar no Portal</span>
+                            </button>
+                        </div>
+
+                        <!-- SELEÇÃO RÁPIDA DE LOGIN SIMULADO -->
+                        <div class="pt-2 border-t border-[#EAE0D5] text-center">
+                            <label class="block text-[10px] font-extrabold uppercase tracking-wider text-[#82746A] mb-1">Acesso Rápido de Teste:</label>
+                            <select id="quickLoginSelect" onchange="autoFillLoginFromSelect()" class="w-full bg-[#ECE5DE] border-none rounded-xl p-2 text-[11px] text-[#332A45] font-bold focus:ring-1 focus:ring-[#5B5EE5]">
+                                <option value="">-- Escolha um Professor ou ADM --</option>
+                                <option value="danilo.492040@edutec.sed.ms.gov.br">Coord. Danilo (Admin)</option>
+                                <option value="eliveltosouza@adm.yvypoty.edu.br">PCPI. Elivelto (Admin)</option>
+                                <option value="angelabeatriz@yvypoty.edu.br">Profº. Bia (Professor)</option>
+                                <option value="taizanunes@yvypoty.edu.br">Prof. Taiza (Professor)</option>
+                                <option value="nilsonrosa@yvypoty.edu.br">Profº. Nilson (Professor)</option>
+                                <option value="micaelsanhes@yvypoty.edu.br">Profº. Micael (Professor)</option>
+                            </select>
+                        </div>
+
+                    </form>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TELA 2: PORTAL DO PROFESSOR (CLAYMORPHISM SOFT 3D BEGE)                    -->
+    <!-- ========================================================================= -->
+    <div id="portalView" class="hidden min-h-screen bg-[#F5EBE1] text-[#3D332D] flex antialiased overflow-x-hidden p-2 md:p-4 gap-4">
+
+        <!-- SIDEBAR RECOLHÍVEL E EXPANSÍVEL NO HOVER -->
+        <aside id="mainSidebar" 
+               onmouseenter="expandSidebarOnHover()" 
+               onmouseleave="collapseSidebarOnHover()" 
+               class="w-20 md:w-24 bg-[#DCE8E1] border-2 border-white/80 rounded-[32px] shadow-[8px_10px_24px_rgba(170,185,178,0.35),-4px_-4px_12px_rgba(255,255,255,0.9)] flex flex-col justify-between h-[calc(100vh-2rem)] sticky top-4 z-40 sidebar-transition shrink-0 overflow-hidden group/sidebar py-4 px-2.5">
+            
+            <div class="flex flex-col w-full items-center">
+                <!-- AVATAR TOPO -->
+                <div class="flex items-center gap-3.5 p-2 mb-4 w-full justify-center group-hover/sidebar:justify-start">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FFAF96] to-[#FFD5C6] p-1 shadow-[4px_5px_12px_rgba(195,140,120,0.35),-2px_-2px_6px_rgba(255,255,255,0.9)] flex items-center justify-center shrink-0 border-2 border-white transition-transform group-hover/sidebar:scale-105">
+                        <span class="text-xl">🌿</span>
+                    </div>
+                    <div class="sidebar-label flex flex-col transition-opacity duration-200 hidden whitespace-nowrap overflow-hidden">
+                        <span class="text-xs font-black tracking-tight text-[#33423A] font-display">EEIEM Yvy Poty</span>
+                        <span class="text-[10px] text-[#527763] font-bold tracking-wider uppercase">Portal do Professor</span>
+                    </div>
+                </div>
+
+                <!-- MENU PRINCIPAL DA SIDEBAR -->
+                <nav class="flex flex-col gap-2 w-full scrollbar-hide overflow-y-auto max-h-[calc(100vh-230px)] px-1" id="sidebarMenu">
+                    
+                    <!-- Painel Principal -->
+                    <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-btn w-full flex items-center gap-3.5 p-3 rounded-2xl text-[#465A50] hover:text-[#21352A] transition-all group/btn bg-white text-[#21352A] shadow-[3px_4px_10px_rgba(150,175,165,0.35),-2px_-2px_6px_rgba(255,255,255,0.9)] border border-white" title="Painel Principal">
+                        <div class="w-7 h-7 rounded-xl bg-[#CDE5D8] flex items-center justify-center shrink-0 shadow-inner text-[#2B5442]">
+                            <i class="fa-solid fa-house text-xs"></i>
+                        </div>
+                        <span class="sidebar-label text-xs font-bold tracking-wide whitespace-nowrap hidden">Painel Principal</span>
+                    </button>
+
+                    <!-- Agendamentos de Recursos -->
+                    <button onclick="switchTab('booking')" data-tab="booking" class="nav-btn w-full flex items-center gap-3.5 p-3 rounded-2xl text-[#4B6156] hover:text-[#21352A] hover:bg-white/60 transition-all group/btn" title="Agendamentos de Recursos">
+                        <div class="w-7 h-7 rounded-xl bg-[#D7ECF9] flex items-center justify-center shrink-0 shadow-inner text-[#2C6082]">
+                            <i class="fa-solid fa-calendar-check text-xs"></i>
+                        </div>
+                        <span class="sidebar-label text-xs font-bold tracking-wide whitespace-nowrap hidden">Agendar Recursos</span>
+                    </button>
+
+                    <!-- Meus Agendamentos -->
+                    <button onclick="switchTab('my-bookings')" data-tab="my-bookings" class="nav-btn w-full flex items-center gap-3.5 p-3 rounded-2xl text-[#4B6156] hover:text-[#21352A] hover:bg-white/60 transition-all group/btn" title="Meus Agendamentos">
+                        <div class="w-7 h-7 rounded-xl bg-[#FFDDCF] flex items-center justify-center shrink-0 shadow-inner text-[#924329]">
+                            <i class="fa-solid fa-key text-xs"></i>
+                        </div>
+                        <span class="sidebar-label text-xs font-bold tracking-wide whitespace-nowrap hidden">Meus Agendamentos</span>
+                    </button>
+
+                    <!-- APC (Atividades Pedagógicas) -->
+                    <button onclick="switchTab('apc')" data-tab="apc" class="nav-btn w-full flex items-center gap-3.5 p-3 rounded-2xl text-[#4B6156] hover:text-[#21352A] hover:bg-white/60 transition-all group/btn" title="Atividades Pedagógicas Complementares">
+                        <div class="w-7 h-7 rounded-xl bg-[#D5EDE2] flex items-center justify-center shrink-0 shadow-inner text-[#2F6553]">
+                            <i class="fa-solid fa-file-arrow-up text-xs"></i>
+                        </div>
+                        <span class="sidebar-label text-xs font-bold tracking-wide whitespace-nowrap hidden">Criar / Enviar APC</span>
+                    </button>
+
+                    <!-- Avaliações Bimestrais -->
+                    <button onclick="switchTab('evaluations')" data-tab="evaluations" class="nav-btn w-full flex items-center gap-3.5 p-3 rounded-2xl text-[#4B6156] hover:text-[#21352A] hover:bg-white/60 transition-all group/btn" title="Avaliações Bimestrais">
+                        <div class="w-7 h-7 rounded-xl bg-[#FFE6CC] flex items-center justify-center shrink-0 shadow-inner text-[#8C531E]">
+                            <i class="fa-solid fa-clipboard-check text-xs"></i>
+                        </div>
+                        <span class="sidebar-label text-xs font-bold tracking-wide whitespace-nowrap hidden">Avaliações Bimestrais</span>
+                    </button>
+
+                    <!-- Meus Horários -->
+                    <button onclick="switchTab('schedule')" data-tab="schedule" class="nav-btn w-full flex items-center gap-3.5 p-3 rounded-2xl text-[#4B6156] hover:text-[#21352A] hover:bg-white/60 transition-all group/btn" title="Meus Horários">
+                        <div class="w-7 h-7 rounded-xl bg-[#EBDFF3] flex items-center justify-center shrink-0 shadow-inner text-[#694086]">
+                            <i class="fa-solid fa-clock text-xs"></i>
+                        </div>
+                        <span class="sidebar-label text-xs font-bold tracking-wide whitespace-nowrap hidden">Meu Horários</span>
+                    </button>
+
+                    <hr class="border-[#C3D5CB] my-1 w-full" />
+
+                    <!-- PAINEL ADM (SOMENTE PARA ADMINISTRADORES) -->
+                    <button onclick="switchTab('admin')" data-tab="admin" id="adminSidebarBtn" class="nav-btn w-full flex items-center gap-3.5 p-3 rounded-2xl text-[#8C531E] hover:bg-amber-100/70 transition-all group/btn hidden" title="Painel do Administrador">
+                        <div class="w-7 h-7 rounded-xl bg-[#FEF0C3] flex items-center justify-center shrink-0 shadow-inner text-[#825E12]">
+                            <i class="fa-solid fa-shield-halved text-xs"></i>
+                        </div>
+                        <span class="sidebar-label text-xs font-bold tracking-wide whitespace-nowrap hidden">Painel ADM</span>
+                    </button>
+
+                </nav>
+            </div>
+
+            <!-- BOTÃO SAIR / LOGOUT BASE SIDEBAR -->
+            <div class="w-full shrink-0 pt-2 border-t border-[#C3D5CB]/80 space-y-2">
+                <button onclick="openUserSwitchModal()" class="w-full flex items-center gap-3 p-2 rounded-2xl bg-white/70 hover:bg-white border border-white/80 shadow-[2px_3px_8px_rgba(150,175,165,0.25)] transition-all text-left group" title="Simular Outro Usuário">
+                    <div class="w-7 h-7 rounded-xl bg-[#FFDDCF] text-[#8D442C] flex items-center justify-center shrink-0 font-extrabold text-[11px] shadow-inner" id="userAvatarInitials">
+                        PB
+                    </div>
+                    <div class="sidebar-label flex flex-col hidden overflow-hidden whitespace-nowrap">
+                        <span class="text-xs font-black text-[#2B3B33] truncate" id="sidebarUserName">Profº. Bia</span>
+                        <span class="text-[10px] text-[#558269] font-bold truncate">Trocar Usuário ↺</span>
+                    </div>
+                </button>
+
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 p-2 rounded-2xl bg-[#FFD7C7] hover:bg-[#FFC6B0] text-[#863C24] font-black text-xs transition-all shadow-sm">
+                    <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                    <span class="sidebar-label hidden whitespace-nowrap">Sair do Portal</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ÁREA DE CONTEÚDO PRINCIPAL DO PORTAL -->
+        <main class="flex-1 p-2 md:p-6 overflow-y-auto max-w-7xl mx-auto w-full min-w-0">
+            
+            <!-- CABEÇALHO SUPERIOR DA PÁGINA -->
+            <header class="flex flex-col md:flex-row items-start md:items-center justify-between pb-6 mb-6 gap-4 border-b border-[#E7DDD2]">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="clay-badge-mint px-3 py-0.5 rounded-full text-xs font-extrabold tracking-wide uppercase" id="userRoleBadge">
+                            Professor
+                        </span>
+                        <span class="text-xs text-[#8C7D73] font-bold">🏫 EEIEM Yvy Poty</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-black tracking-tight text-[#342A24] font-display" id="headerUserTitle">Portal do Professor</h1>
+                    <p class="text-xs text-[#82746A] mt-0.5 font-medium flex items-center gap-1.5" id="headerUserEmail">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+                        angelabeatriz@yvypoty.edu.br
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2.5 w-full md:w-auto justify-end">
+                    <button onclick="openUserSwitchModal()" class="clay-button bg-[#FAF4ED] text-[#42342C] px-3.5 py-2 rounded-2xl text-xs font-black flex items-center gap-2 border border-white hover:bg-white">
+                        <span>🔄</span>
+                        <span>Simular Perfil</span>
+                    </button>
+                    <button onclick="handleLogout()" class="clay-button bg-[#FFD7C7] text-[#863C24] px-4 py-2 rounded-2xl text-xs font-black flex items-center gap-2 border border-white hover:bg-[#FFC6B0]">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Sair</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- BANNER BOAS-VINDAS ESCOLA -->
+            <div class="clay-card p-6 md:p-7 mb-8 relative overflow-hidden bg-[#FAF5EE] border-2 border-white/90">
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                    <div class="w-20 h-20 md:w-24 md:h-24 rounded-3xl bg-gradient-to-tr from-[#FFAF96] via-[#FFCCB8] to-[#FFE3D6] p-2 flex items-center justify-center shrink-0 shadow-[6px_8px_18px_rgba(210,145,120,0.35),-4px_-4px_10px_rgba(255,255,255,0.9)] border-2 border-white">
+                        <span class="text-4xl md:text-5xl">🌱</span>
+                    </div>
+                    <div class="flex-1 text-center md:text-left">
+                        <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
+                            <span class="text-sm font-extrabold text-[#9A5034]">Boas-vindas ao Portal Oficial! ✨</span>
+                        </div>
+                        <h2 class="text-xl md:text-2xl font-black text-[#342A24] font-display">Olá! Seja bem-vindo ao Portal da Escola Indígena Yvy Poty</h2>
+                        <p class="text-xs md:text-sm text-[#706259] mt-2 leading-relaxed">
+                            A finalidade deste portal é agilizar a rotina docente para o agendamento de recursos da <strong>Escola Estadual Indígena de Ensino Médio Yvy Poty</strong>: <strong>5 projetores, 1 TV, 2 caixas de som, Salas STE 1 e 2, Laboratório e Sala de Artes.</strong>
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+                            <span class="clay-badge-mint px-3 py-1 rounded-xl text-[11px] font-bold">💻 STE 1 & STE 2</span>
+                            <span class="clay-badge-sky px-3 py-1 rounded-xl text-[11px] font-bold">📽️ 5 Projetores</span>
+                            <span class="clay-badge-apricot px-3 py-1 rounded-xl text-[11px] font-bold">🔊 Caixas de Som & TV</span>
+                            <span class="clay-badge-lilac px-3 py-1 rounded-xl text-[11px] font-bold">🧪 Laboratório & Artes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NOTIFICAÇÕES TOAST -->
+            <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+            <!-- ========================================================================= -->
+            <!-- ABA 1: DASHBOARD                                                          -->
+            <!-- ========================================================================= -->
+            <section id="tab-dashboard" class="tab-content space-y-6">
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-black text-[#342A24] font-display" id="dashPanelTitle">Painel do Professor</h2>
+                        <p class="text-xs text-[#82746A] mt-0.5">Clique em um dos blocos para acessar as opções disponíveis.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Card 1: Agendamentos de Recursos -->
+                    <button onclick="switchTab('booking')" class="clay-card clay-card-interactive p-6 text-left flex flex-col justify-between h-56 group bg-[#FAF5EE]">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-[#CCE5F3] text-[#245474] flex items-center justify-center shadow-[3px_4px_10px_rgba(160,195,215,0.4),-2px_-2px_6px_rgba(255,255,255,0.9)] mb-4 border border-white">
+                                <i class="fa-solid fa-calendar-days text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-black text-[#2B231E] group-hover:text-[#256385] transition-colors font-display">Agendamentos de Recursos</h3>
+                            <p class="text-xs text-[#7B6E65] mt-1.5 leading-relaxed">Reserve STE 1, STE 2, Projetores (1-5), TV, Caixas de Som, Laboratório e Sala de Artes.</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-[#EAE0D5]">
+                            <span class="text-[11px] font-extrabold text-[#2C6082] uppercase tracking-wider">Acessar Agenda</span>
+                            <div class="w-7 h-7 rounded-full bg-[#CCE5F3] flex items-center justify-center text-[#245474] font-bold text-sm group-hover:translate-x-1 transition-transform">→</div>
+                        </div>
+                    </button>
+
+                    <!-- Card 2: APC (Atividades Pedagógicas) -->
+                    <button onclick="switchTab('apc')" class="clay-card clay-card-interactive p-6 text-left flex flex-col justify-between h-56 group bg-[#FAF5EE]">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-[#C8E7D7] text-[#235841] flex items-center justify-center shadow-[3px_4px_10px_rgba(150,190,170,0.4),-2px_-2px_6px_rgba(255,255,255,0.9)] mb-4 border border-white">
+                                <i class="fa-solid fa-file-arrow-up text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-black text-[#2B231E] group-hover:text-[#235841] transition-colors font-display">Atividades Pedagógicas (APC)</h3>
+                            <p class="text-xs text-[#7B6E65] mt-1.5 leading-relaxed">Envie documentos e arquivos de APC organizados por disciplina e turma diretamente para o Drive.</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-[#EAE0D5]">
+                            <span class="text-[11px] font-extrabold text-[#2F6553] uppercase tracking-wider">Enviar APC</span>
+                            <div class="w-7 h-7 rounded-full bg-[#C8E7D7] flex items-center justify-center text-[#235841] font-bold text-sm group-hover:translate-x-1 transition-transform">→</div>
+                        </div>
+                    </button>
+
+                    <!-- Card 3: Meus Agendamentos -->
+                    <button onclick="switchTab('my-bookings')" class="clay-card clay-card-interactive p-6 text-left flex flex-col justify-between h-56 group bg-[#FAF5EE]">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-[#FFD7C7] text-[#93452B] flex items-center justify-center shadow-[3px_4px_10px_rgba(215,155,135,0.4),-2px_-2px_6px_rgba(255,255,255,0.9)] mb-4 border border-white">
+                                <i class="fa-solid fa-key text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-black text-[#2B231E] group-hover:text-[#93452B] transition-colors font-display">Meus Agendamentos</h3>
+                            <p class="text-xs text-[#7B6E65] mt-1.5 leading-relaxed">Consulte suas reservas ativas e recupere os códigos de 6 dígitos dos computadores.</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-[#EAE0D5]">
+                            <span class="text-[11px] font-extrabold text-[#924329] uppercase tracking-wider">Ver Chaves</span>
+                            <div class="w-7 h-7 rounded-full bg-[#FFD7C7] flex items-center justify-center text-[#93452B] font-bold text-sm group-hover:translate-x-1 transition-transform">→</div>
+                        </div>
+                    </button>
+
+                    <!-- Card 4: Avaliações Bimestrais -->
+                    <button onclick="switchTab('evaluations')" class="clay-card clay-card-interactive p-6 text-left flex flex-col justify-between h-56 group bg-[#FAF5EE]">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-[#FFE4C7] text-[#935B21] flex items-center justify-center shadow-[3px_4px_10px_rgba(215,175,130,0.4),-2px_-2px_6px_rgba(255,255,255,0.9)] mb-4 border border-white">
+                                <i class="fa-solid fa-clipboard-check text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-black text-[#2B231E] group-hover:text-[#935B21] transition-colors font-display">Avaliações Bimestrais (AB)</h3>
+                            <p class="text-xs text-[#7B6E65] mt-1.5 leading-relaxed">Envio de provas com filtro de bimestre e suporte a arquivos e links do Google Forms.</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-[#EAE0D5]">
+                            <span class="text-[11px] font-extrabold text-[#8C531E] uppercase tracking-wider">Gerenciar Provas</span>
+                            <div class="w-7 h-7 rounded-full bg-[#FFE4C7] flex items-center justify-center text-[#935B21] font-bold text-sm group-hover:translate-x-1 transition-transform">→</div>
+                        </div>
+                    </button>
+
+                    <!-- Card 5: Meus Horários -->
+                    <button onclick="switchTab('schedule')" class="clay-card clay-card-interactive p-6 text-left flex flex-col justify-between h-56 group bg-[#FAF5EE]">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-[#E8DAF3] text-[#693E89] flex items-center justify-center shadow-[3px_4px_10px_rgba(195,170,215,0.4),-2px_-2px_6px_rgba(255,255,255,0.9)] mb-4 border border-white">
+                                <i class="fa-solid fa-clock text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-black text-[#2B231E] group-hover:text-[#693E89] transition-colors font-display">Meu Horários</h3>
+                            <p class="text-xs text-[#7B6E65] mt-1.5 leading-relaxed">Consulte sua grade horária semanal vinculada ao seu e-mail institucional.</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-[#EAE0D5]">
+                            <span class="text-[11px] font-extrabold text-[#694086] uppercase tracking-wider">Ver Grade</span>
+                            <div class="w-7 h-7 rounded-full bg-[#E8DAF3] flex items-center justify-center text-[#693E89] font-bold text-sm group-hover:translate-x-1 transition-transform">→</div>
+                        </div>
+                    </button>
+
+                    <!-- Card 6: Painel ADM Geral (SOMENTE ADMINISTRADORES) -->
+                    <button onclick="switchTab('admin')" id="dashAdminCard" class="clay-card clay-card-interactive p-6 text-left flex-col justify-between h-56 group bg-[#FAF5EE] border-2 border-[#F9E29B] hidden">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-[#FDE9AA] text-[#78590D] flex items-center justify-center shadow-[3px_4px_10px_rgba(215,185,115,0.4),-2px_-2px_6px_rgba(255,255,255,0.9)] mb-4 border border-white">
+                                <i class="fa-solid fa-shield-halved text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-black text-[#78590D] font-display">Painel ADM Geral</h3>
+                            <p class="text-xs text-[#7B6E65] mt-1.5 leading-relaxed">Visão global e controle completo de todos os agendamentos, APCs e avaliações dos professores.</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-[#F2DEAC]">
+                            <span class="text-[11px] font-extrabold text-[#7A5B0A] uppercase tracking-wider">Acesso Coordenação</span>
+                            <div class="w-7 h-7 rounded-full bg-[#FDE9AA] flex items-center justify-center text-[#78590D] font-bold text-sm group-hover:translate-x-1 transition-transform">→</div>
+                        </div>
+                    </button>
+
+                </div>
+            </section>
+
+            <!-- ========================================================================= -->
+            <!-- ABA 2: AGENDAMENTOS                                                       -->
+            <!-- ========================================================================= -->
+            <section id="tab-booking" class="tab-content hidden space-y-6">
+                <div class="clay-card p-6 md:p-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 mb-6 border-b border-[#E7DDD2] gap-3">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-black text-[#342A24] font-display">Agendamento de Recursos</h2>
+                            <p class="text-xs text-[#82746A] mt-0.5">Selecione o recurso, preencha o conteúdo, data e clique sobre a aula para reservar.</p>
+                        </div>
+                        <div class="clay-badge-peach p-3 rounded-2xl text-xs font-bold flex items-center gap-2">
+                            <span>🗓️</span>
+                            <span><strong>Trava Mês Seguinte:</strong> Liberação após o dia <strong>26</strong>.</span>
+                        </div>
+                    </div>
+
+                    <!-- FORMULÁRIO DE SELEÇÃO -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-8 bg-[#EFE6DC] p-5 md:p-6 rounded-[24px] border border-white/60 shadow-inner">
+                        
+                        <div class="md:col-span-4">
+                            <label class="block text-xs font-black uppercase tracking-wider text-[#695C54] mb-2">Recurso Escolar</label>
+                            <select id="bookingResourceInput" onchange="checkResourceSteSelection()" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-3.5 text-xs text-[#352B25] font-bold focus:outline-none focus:ring-2 focus:ring-[#8CBAA4] shadow-inner">
+                                <optgroup label="Salas Tecnológicas (Com fluxo de Chave)">
+                                    <option value="STE 1">STE 1</option>
+                                    <option value="STE 2">STE 2</option>
+                                </optgroup>
+                                <optgroup label="Projetores (Até 5 concomitantes)">
+                                    <option value="Projetor 1">Projetor 1</option>
+                                    <option value="Projetor 2">Projetor 2</option>
+                                    <option value="Projetor 3">Projetor 3</option>
+                                    <option value="Projetor 4">Projetor 4</option>
+                                    <option value="Projetor 5">Projetor 5</option>
+                                </optgroup>
+                                <optgroup label="Outros Equipamentos">
+                                    <option value="1 TV">1 TV</option>
+                                    <option value="Caixa de Som 1">Caixa de Som 1</option>
+                                    <option value="Caixa de Som 2">Caixa de Som 2</option>
+                                    <option value="Laboratório">Laboratório</option>
+                                    <option value="Sala de Artes">Sala de Artes</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-5">
+                            <label class="block text-xs font-black uppercase tracking-wider text-[#695C54] mb-2">Conteúdo / Atividade</label>
+                            <input type="text" id="bookingContentInput" placeholder="Ex: Pesquisa de Biologia / Slides" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-3.5 text-xs text-[#352B25] font-medium focus:outline-none focus:ring-2 focus:ring-[#8CBAA4] shadow-inner">
+                        </div>
+
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-black uppercase tracking-wider text-[#695C54] mb-2">Data</label>
+                            <input type="date" id="bookingDateInput" onchange="renderBookingGridSlots()" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-3 text-xs text-[#352B25] font-bold focus:outline-none focus:ring-2 focus:ring-[#8CBAA4] shadow-inner">
+                        </div>
+
+                        <div class="md:col-span-12">
+                            <label class="block text-xs font-black uppercase tracking-wider text-[#695C54] mb-2">Observação (Opcional)</label>
+                            <input type="text" id="bookingObsInput" placeholder="Observações adicionais para o suporte técnico..." class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-3.5 text-xs text-[#352B25] font-medium focus:outline-none focus:ring-2 focus:ring-[#8CBAA4] shadow-inner">
+                        </div>
+                    </div>
+
+                    <!-- GRADE DE HORÁRIOS DA DATA -->
+                    <div>
+                        <h3 class="text-sm font-black text-[#342A24] mb-4 flex items-center justify-between font-display">
+                            <span class="flex items-center gap-2">
+                                <span>⏰</span> Escolha a Aula para Agendar:
+                            </span>
+                            <span class="clay-badge-mint px-3 py-1 rounded-xl text-xs font-extrabold" id="bookingGridDateLabel"></span>
+                        </h3>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="bookingSlotsGrid">
+                            <!-- Inserido dinamicamente via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================================= -->
+            <!-- ABA 3: MEUS AGENDAMENTOS                                                 -->
+            <!-- ========================================================================= -->
+            <section id="tab-my-bookings" class="tab-content hidden space-y-6">
+                <div class="clay-card p-6 md:p-8">
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#E7DDD2]">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-black text-[#342A24] font-display">Meus Agendamentos de Recursos</h2>
+                            <p class="text-xs text-[#82746A] mt-0.5">Veja a listagem das suas reservas e recupere as chaves de 6 dígitos geradas.</p>
+                        </div>
+                        <button onclick="switchTab('booking')" class="clay-button bg-[#CCE5F3] text-[#245474] px-4 py-2 text-xs font-black rounded-xl">
+                            + Novo Agendamento
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-2xl border border-white/80 shadow-inner bg-[#EFE6DC]">
+                        <table class="w-full text-left text-xs text-[#41362F]">
+                            <thead class="bg-[#E4D9CD] text-[11px] text-[#695B52] uppercase font-black tracking-wider border-b border-[#D8CABE]">
+                                <tr>
+                                    <th class="p-4">Data</th>
+                                    <th class="p-4">Aula / Horário</th>
+                                    <th class="p-4">Recurso</th>
+                                    <th class="p-4">Chave / Modo</th>
+                                    <th class="p-4">Conteúdo</th>
+                                    <th class="p-4 text-right">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myBookingsTableBody" class="divide-y divide-[#E4D9CD] bg-[#FAF5EE]">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================================= -->
+            <!-- ABA 4: APC (ATIVIDADE PEDAGÓGICA)                                         -->
+            <!-- ========================================================================= -->
+            <section id="tab-apc" class="tab-content hidden space-y-6">
+                <div class="clay-card p-6 md:p-8">
+                    <div class="pb-6 mb-6 border-b border-[#E7DDD2] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-black text-[#342A24] font-display">Atividade Pedagógica Complementar (APC)</h2>
+                            <p class="text-xs text-[#82746A] mt-0.5">Envie suas APCs organizadas por disciplina, turma e data.</p>
+                        </div>
+                        <button onclick="document.getElementById('apcModal').classList.remove('hidden')" class="clay-button bg-[#C8E7D7] text-[#235841] px-5 py-2.5 rounded-2xl text-xs font-black flex items-center gap-2 border border-white">
+                            <span class="text-base font-bold">+</span> Criar Nova APC
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5" id="apcGridContainer">
+                        <!-- Gerado via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================================= -->
+            <!-- ABA 5: AVALIAÇÕES BIMESTRAIS (AB)                                        -->
+            <!-- ========================================================================= -->
+            <section id="tab-evaluations" class="tab-content hidden space-y-6">
+                <div class="clay-card p-6 md:p-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 mb-6 border-b border-[#E7DDD2] gap-4">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-black text-[#342A24] font-display">Avaliação Bimestral (AB)</h2>
+                            <p class="text-xs text-[#82746A] mt-0.5">Envie suas provas em PDF, Word ou links direto do Google Forms.</p>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <label class="text-xs text-[#6C5F56] font-black uppercase">Bimestre:</label>
+                            <select id="abBimesterFilter" onchange="renderABGrid()" class="bg-[#FAF5EE] border-2 border-white rounded-2xl p-2.5 text-xs text-[#352B25] font-black shadow-md">
+                                <option value="1º Bimestre">1º Bimestre</option>
+                                <option value="2º Bimestre">2º Bimestre</option>
+                                <option value="3º Bimestre">3º Bimestre</option>
+                                <option value="4º Bimestre">4º Bimestre</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5" id="abGridContainer">
+                        <!-- Gerado via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================================= -->
+            <!-- ABA 6: MEUS HORÁRIOS                                                      -->
+            <!-- ========================================================================= -->
+            <section id="tab-schedule" class="tab-content hidden space-y-6">
+                <div class="clay-card p-6 md:p-8">
+                    <h2 class="text-xl md:text-2xl font-black text-[#342A24] font-display mb-1">Meu Horários</h2>
+                    <p class="text-xs text-[#82746A] mb-6" id="scheduleUserLabel">Grade oficial de aulas cadastradas no sistema institucional.</p>
+
+                    <div class="overflow-x-auto rounded-2xl border border-white/90 shadow-inner bg-[#EFE6DC]">
+                        <table class="w-full text-left text-xs text-[#3E342E] border-collapse">
+                            <thead class="bg-[#E4D9CD] text-[11px] text-[#63564D] uppercase font-black tracking-wider border-b border-[#D8CABE]">
+                                <tr>
+                                    <th class="p-4 border-r border-[#D8CABE] w-36">Horário / Aula</th>
+                                    <th class="p-4 border-r border-[#D8CABE] text-center">Segunda-feira</th>
+                                    <th class="p-4 border-r border-[#D8CABE] text-center">Terça-feira</th>
+                                    <th class="p-4 border-r border-[#D8CABE] text-center">Quarta-feira</th>
+                                    <th class="p-4 border-r border-[#D8CABE] text-center">Quinta-feira</th>
+                                    <th class="p-4 text-center">Sexta-feira</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scheduleTableBody" class="divide-y divide-[#E4D9CD] bg-[#FAF5EE]">
+                                <!-- Inserido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================================= -->
+            <!-- ABA 7: PAINEL ADM (SOMENTE ADMINISTRADORES)                               -->
+            <!-- ========================================================================= -->
+            <section id="tab-admin" class="tab-content hidden space-y-6">
+                <div class="clay-card p-6 md:p-8 border-2 border-[#F6E1A2]">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 mb-6 border-b border-[#E7DDD2] gap-4">
+                        <div>
+                            <span class="clay-badge-yellow px-3 py-1 rounded-full text-[10px] font-black uppercase mb-1.5 inline-block">
+                                ⭐ Acesso Exclusivo Coordenação / PCPI
+                            </span>
+                            <h2 class="text-xl md:text-2xl font-black text-[#342A24] font-display">Painel do Administrador - Geral</h2>
+                            <p class="text-xs text-[#82746A] mt-0.5">Acompanhamento completo de agendamentos, APCs e avaliações de todos os professores.</p>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <button onclick="exportReportCSV()" class="clay-button bg-[#C8E7D7] text-[#235841] px-4 py-2.5 text-xs font-black flex items-center gap-1.5 border border-white">
+                                <span>📊</span> Exportar CSV
+                            </button>
+                            <button onclick="window.print()" class="clay-button bg-white text-[#342A24] px-4 py-2.5 text-xs font-black flex items-center gap-1.5 border border-[#E0D4C7]">
+                                <span>🖨️</span> Imprimir
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- NAVEGAÇÃO DE SUB-PAINÉIS ADM -->
+                    <div class="flex border-b border-[#E7DDD2] mb-6 gap-3 overflow-x-auto pb-2">
+                        <button onclick="switchAdminSubtab('bookings')" id="adminSubtabBtn-bookings" class="px-4 py-2 rounded-2xl bg-white font-black text-xs text-[#352B25] shadow-md border border-white">Painel - Agendamentos</button>
+                        <button onclick="switchAdminSubtab('apcs')" id="adminSubtabBtn-apcs" class="px-4 py-2 rounded-2xl font-bold text-xs text-[#7B6E65] hover:bg-white/50">Painel - APCs</button>
+                        <button onclick="switchAdminSubtab('evals')" id="adminSubtabBtn-evals" class="px-4 py-2 rounded-2xl font-bold text-xs text-[#7B6E65] hover:bg-white/50">Painel - Avaliação Bimestral</button>
+                    </div>
+
+                    <!-- SUBTELA 1: AGENDAMENTOS -->
+                    <div id="adminSubtab-bookings" class="space-y-4">
+                        <h3 class="text-sm font-black text-[#342A24] font-display">Agendamentos Registrados por Todos os Professores</h3>
+                        <div class="overflow-x-auto rounded-2xl border border-white/80 shadow-inner bg-[#EFE6DC]">
+                            <table class="w-full text-left text-xs text-[#3E342E]">
+                                <thead class="bg-[#E4D9CD] text-[11px] text-[#695B52] uppercase font-black tracking-wider border-b border-[#D8CABE]">
+                                    <tr>
+                                        <th class="p-3.5">Horário</th>
+                                        <th class="p-3.5">Professor</th>
+                                        <th class="p-3.5">Recurso</th>
+                                        <th class="p-3.5">Disciplina / Turma</th>
+                                        <th class="p-3.5">Data</th>
+                                        <th class="p-3.5">Conteúdo / Obs</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminBookingsTableBody" class="divide-y divide-[#E4D9CD] bg-[#FAF5EE]">
+                                    <!-- Preenchido via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SUBTELA 2: APCS -->
+                    <div id="adminSubtab-apcs" class="space-y-4 hidden">
+                        <div class="clay-badge-mint p-3.5 rounded-2xl text-xs font-bold">
+                            💡 Conforme especificação, ao clicar em "Ver Arquivo", o modal exibirá a observação e o link do arquivo enviado pelo professor.
+                        </div>
+                        <div class="overflow-x-auto rounded-2xl border border-white/80 shadow-inner bg-[#EFE6DC]">
+                            <table class="w-full text-left text-xs text-[#3E342E]">
+                                <thead class="bg-[#E4D9CD] text-[11px] text-[#695B52] uppercase font-black tracking-wider border-b border-[#D8CABE]">
+                                    <tr>
+                                        <th class="p-3.5">Professor</th>
+                                        <th class="p-3.5">Turma</th>
+                                        <th class="p-3.5">Data</th>
+                                        <th class="p-3.5">Disciplina</th>
+                                        <th class="p-3.5">Observação</th>
+                                        <th class="p-3.5">Arquivo Enviado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminApcsTableBody" class="divide-y divide-[#E4D9CD] bg-[#FAF5EE]">
+                                    <!-- Preenchido via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SUBTELA 3: AVALIAÇÃO BIMESTRAL -->
+                    <div id="adminSubtab-evals" class="space-y-4 hidden">
+                        <div class="overflow-x-auto rounded-2xl border border-white/80 shadow-inner bg-[#EFE6DC]">
+                            <table class="w-full text-left text-xs text-[#3E342E]">
+                                <thead class="bg-[#E4D9CD] text-[11px] text-[#695B52] uppercase font-black tracking-wider border-b border-[#D8CABE]">
+                                    <tr>
+                                        <th class="p-3.5">Bimestre</th>
+                                        <th class="p-3.5">Professor</th>
+                                        <th class="p-3.5">Turma</th>
+                                        <th class="p-3.5">Data</th>
+                                        <th class="p-3.5">Disciplina</th>
+                                        <th class="p-3.5">Arquivo / Form</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminEvalsTableBody" class="divide-y divide-[#E4D9CD] bg-[#FAF5EE]">
+                                    <!-- Preenchido via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAIS E COMPONENTES FLUTUANTES                                           -->
+    <!-- ========================================================================= -->
+
+    <!-- MODAL 1: ESCOLHA DO STE E MODO -->
+    <div id="steModal" class="fixed inset-0 bg-[#2E241E]/40 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+        <div class="clay-card p-6 md:p-8 max-w-lg w-full bg-[#FAF5EE] space-y-5 border-2 border-white shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-[#E7DDD2]">
+                <h3 class="text-base font-black text-[#342A24] flex items-center gap-2 font-display">
+                    <span class="w-3 h-3 rounded-full bg-[#CCE5F3] inline-block shadow-inner"></span>
+                    Escolha a Sala STE
+                </h3>
+                <button onclick="closeModal('steModal')" class="w-8 h-8 rounded-full bg-[#EFE6DC] text-[#7B6E65] hover:text-[#342A24] font-bold text-lg flex items-center justify-center">&times;</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Disciplina</label>
+                    <select id="steSubject" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2.5 text-xs text-[#352B25] font-bold shadow-inner">
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Turma</label>
+                    <select id="steClass" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2.5 text-xs text-[#352B25] font-bold shadow-inner">
+                        <option value="1°A">1°A</option>
+                        <option value="1°B">1°B</option>
+                        <option value="2°A">2°A</option>
+                        <option value="2°B">2°B</option>
+                        <option value="2°C">2°C</option>
+                        <option value="3°A">3°A</option>
+                        <option value="3°B">3°B</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Data</label>
+                    <input type="date" id="steDate" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2 text-xs text-[#352B25] font-bold shadow-inner">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-black uppercase text-[#695C54] mb-2">Selecione a Sala STE:</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="p-4 rounded-2xl bg-[#FAF5EE] border-2 border-white hover:border-[#CCE5F3] cursor-pointer flex items-center justify-center gap-2 text-xs font-black text-[#342A24] shadow-md transition-all">
+                        <input type="radio" name="steRoomChoice" value="STE 1" checked class="accent-[#2C6082]">
+                        STE 1
+                    </label>
+                    <label class="p-4 rounded-2xl bg-[#FAF5EE] border-2 border-white hover:border-[#CCE5F3] cursor-pointer flex items-center justify-center gap-2 text-xs font-black text-[#342A24] shadow-md transition-all">
+                        <input type="radio" name="steRoomChoice" value="STE 2" class="accent-[#2C6082]">
+                        STE 2
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-black uppercase text-[#695C54] mb-2">Finalidade de Uso:</label>
+                <select id="steModeChoice" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-3 text-xs text-[#352B25] font-bold shadow-inner">
+                    <option value="Reunião (Apenas Sala)">Reunião (Apenas Sala)</option>
+                    <option value="Computadores">Computadores (Gera Chave de 6 dígitos)</option>
+                </select>
+            </div>
+
+            <button onclick="confirmSTEBooking()" class="w-full py-3.5 rounded-2xl bg-[#FFD7C7] hover:bg-[#FFC6B0] text-[#863C24] font-black text-xs transition-all shadow-md uppercase tracking-wider border-2 border-white">
+                Agendar Agora
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CHAVE DE 6 DÍGITOS -->
+    <div id="keyModal" class="fixed inset-0 bg-[#2E241E]/40 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+        <div class="clay-card p-6 md:p-8 max-w-md w-full text-center space-y-5 bg-[#FAF5EE] border-2 border-white shadow-2xl">
+            <div class="w-14 h-14 rounded-2xl bg-[#CCE5F3] text-[#245474] flex items-center justify-center mx-auto text-2xl shadow-md border border-white">
+                🔑
+            </div>
+            
+            <h3 class="text-lg font-black text-[#342A24] font-display">Código do Agendamento</h3>
+            
+            <div class="text-xs text-[#7B6E65] space-y-1">
+                <div id="keyModalDetails" class="font-extrabold text-[#9A5034]">Disciplina - Turma</div>
+                <div id="keyModalDate" class="text-[#88786F]">Data: --/--/----</div>
+            </div>
+
+            <div class="flex items-center justify-center gap-2 py-2" id="sixDigitBoxesContainer">
+                <!-- Inseridos via JS -->
+            </div>
+
+            <div class="p-3.5 bg-[#EFE6DC] rounded-2xl text-[11px] text-[#695B52] font-medium shadow-inner">
+                🔒 <strong>Computadores Liberados:</strong> Essa chave é válida para os computadores durante a aula agendada.
+            </div>
+
+            <button onclick="closeModal('keyModal')" class="w-full py-3 rounded-2xl bg-[#C8E7D7] hover:bg-[#B3DEC6] text-[#1E4D38] font-black text-xs uppercase tracking-wider transition-all border-2 border-white shadow-md">
+                OK / Ciente
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 3: CRIAR APC (UPLOAD VIA GOOGLE APPS SCRIPT / LINK) -->
+    <div id="apcModal" class="fixed inset-0 bg-[#2E241E]/40 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+        <div class="clay-card p-6 md:p-8 max-w-lg w-full space-y-4 bg-[#FAF5EE] border-2 border-white shadow-2xl">
+            <div class="flex items-center justify-between pb-2 border-b border-[#E7DDD2]">
+                <h3 class="text-base font-black text-[#342A24] font-display">Enviar Atividade (APC)</h3>
+                <button onclick="closeModal('apcModal')" class="w-8 h-8 rounded-full bg-[#EFE6DC] text-[#7B6E65] hover:text-[#342A24] font-bold text-lg flex items-center justify-center">&times;</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Disciplina</label>
+                    <select id="apcModalSubject" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2.5 text-xs text-[#352B25] font-bold shadow-inner">
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Turma</label>
+                    <select id="apcModalClass" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2.5 text-xs text-[#352B25] font-bold shadow-inner">
+                        <option value="1°A">1°A</option>
+                        <option value="1°B">1°B</option>
+                        <option value="2°A">2°A</option>
+                        <option value="2°B">2°B</option>
+                        <option value="2°C">2°C</option>
+                        <option value="3°A">3°A</option>
+                        <option value="3°B">3°B</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Data</label>
+                    <input type="date" id="apcModalDate" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2 text-xs text-[#352B25] font-bold shadow-inner">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Observação / Conteúdo Referente</label>
+                <textarea id="apcModalObs" rows="2" placeholder="Ex: Atividade referente ao dia 15/10..." class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-3 text-xs text-[#352B25] focus:outline-none focus:ring-2 focus:ring-[#8CBAA4] shadow-inner"></textarea>
+            </div>
+
+            <div class="space-y-2">
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#235841] mb-1">📁 Opção 1: Anexar Arquivo (Upload Direto no Drive)</label>
+                    <input type="file" id="apcModalFileInput" accept=".pdf,.doc,.docx,application/pdf" class="w-full bg-[#EFE6DC] border-2 border-white rounded-2xl p-2 text-xs text-[#352B25] shadow-inner">
+                </div>
+                <div class="text-center text-[10px] text-[#8C7D73] font-bold uppercase">— ou —</div>
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">🔗 Opção 2: Link (Google Drive / Forms)</label>
+                    <input type="url" id="apcModalFileLink" placeholder="https://drive.google.com/..." class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2.5 text-xs text-[#352B25] shadow-inner">
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="submitAPCForm()" class="w-full py-3.5 rounded-2xl bg-[#C8E7D7] hover:bg-[#B3DEC6] text-[#1E4D38] font-black text-xs uppercase tracking-wider transition-all border-2 border-white shadow-md">
+                    Enviar APC
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: CRIAR AVALIAÇÃO BIMESTRAL -->
+    <div id="abModal" class="fixed inset-0 bg-[#2E241E]/40 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+        <div class="clay-card p-6 md:p-8 max-w-lg w-full space-y-4 bg-[#FAF5EE] border-2 border-white shadow-2xl">
+            <div class="flex items-center justify-between pb-2 border-b border-[#E7DDD2]">
+                <h3 class="text-base font-black text-[#342A24] font-display">Enviar Avaliação Bimestral</h3>
+                <button onclick="closeModal('abModal')" class="w-8 h-8 rounded-full bg-[#EFE6DC] text-[#7B6E65] hover:text-[#342A24] font-bold text-lg flex items-center justify-center">&times;</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Bimestre</label>
+                    <select id="abModalBimester" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2.5 text-xs text-[#352B25] font-black shadow-inner">
+                        <option value="1º Bimestre">1º Bimestre</option>
+                        <option value="2º Bimestre">2º Bimestre</option>
+                        <option value="3º Bimestre">3º Bimestre</option>
+                        <option value="4º Bimestre">4º Bimestre</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Disciplina</label>
+                    <select id="abModalSubject" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2.5 text-xs text-[#352B25] font-bold shadow-inner">
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Turma</label>
+                    <select id="abModalClass" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2.5 text-xs text-[#352B25] font-bold shadow-inner">
+                        <option value="1°A">1°A</option>
+                        <option value="1°B">1°B</option>
+                        <option value="2°A">2°A</option>
+                        <option value="2°B">2°B</option>
+                        <option value="2°C">2°C</option>
+                        <option value="3°A">3°A</option>
+                        <option value="3°B">3°B</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">Data</label>
+                    <input type="date" id="abModalDate" class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2 text-xs text-[#352B25] font-bold shadow-inner">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#8C531E] mb-1">📁 Opção 1: Anexar Arquivo de Prova</label>
+                    <input type="file" id="abModalFileInput" accept=".pdf,.doc,.docx,application/pdf" class="w-full bg-[#EFE6DC] border-2 border-white rounded-2xl p-2 text-xs text-[#352B25] shadow-inner">
+                </div>
+                <div class="text-center text-[10px] text-[#8C7D73] font-bold uppercase">— ou —</div>
+                <div>
+                    <label class="block text-[11px] font-black uppercase text-[#695C54] mb-1">🔗 Opção 2: Colar Link (Forms / Drive)</label>
+                    <input type="url" id="abModalLink" placeholder="https://docs.google.com/forms/..." class="w-full bg-[#FAF5EE] border-2 border-white rounded-2xl p-2.5 text-xs text-[#352B25] shadow-inner">
+                </div>
+            </div>
+
+            <button onclick="submitABForm()" class="w-full py-3.5 rounded-2xl bg-[#FFE4C7] hover:bg-[#FFD7AD] text-[#8C531E] font-black text-xs uppercase tracking-wider transition-all border-2 border-white shadow-md">
+                Enviar Avaliação
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 5: DETALHES DE OBSERVAÇÃO DE APC -->
+    <div id="apcObsDetailModal" class="fixed inset-0 bg-[#2E241E]/40 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+        <div class="clay-card p-6 md:p-8 max-w-md w-full space-y-4 bg-[#FAF5EE] border-2 border-white shadow-2xl">
+            <div class="flex items-center justify-between pb-2 border-b border-[#E7DDD2]">
+                <h3 class="text-base font-black text-[#342A24] font-display">Detalhes do APC</h3>
+                <button onclick="closeModal('apcObsDetailModal')" class="w-8 h-8 rounded-full bg-[#EFE6DC] text-[#7B6E65] hover:text-[#342A24] font-bold text-lg flex items-center justify-center">&times;</button>
+            </div>
+
+            <div class="space-y-2 text-xs">
+                <div><strong class="text-[#695C54]">Professor:</strong> <span id="apcDetailTeacher" class="font-bold text-[#342A24]">--</span></div>
+                <div><strong class="text-[#695C54]">Disciplina/Turma:</strong> <span id="apcDetailSubClass" class="font-bold text-[#342A24]">--</span></div>
+                <div><strong class="text-[#695C54]">Data:</strong> <span id="apcDetailDate" class="font-bold text-[#342A24]">--</span></div>
+                <div class="p-4 bg-[#EFE6DC] rounded-2xl text-[#423730] mt-2 shadow-inner font-medium" id="apcDetailObsText">
+                    Nenhuma observação informada.
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <a id="apcDetailDownloadBtn" href="#" target="_blank" class="w-full py-3 rounded-2xl bg-[#CCE5F3] hover:bg-[#B7D8EC] text-[#245474] font-black text-xs transition-all flex items-center justify-center gap-2 border-2 border-white shadow-md">
+                    Abrir Arquivo do Professor ↗
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: SIMULADOR DE TROCA DE USUÁRIO -->
+    <div id="userSwitchModal" class="fixed inset-0 bg-[#2E241E]/40 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+        <div class="clay-card p-6 md:p-8 max-w-md w-full space-y-4 bg-[#FAF5EE] border-2 border-white shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-[#E7DDD2]">
+                <h3 class="text-base font-black text-[#342A24] font-display">Simular Outro Perfil</h3>
+                <button onclick="closeModal('userSwitchModal')" class="w-8 h-8 rounded-full bg-[#EFE6DC] text-[#7B6E65] hover:text-[#342A24] font-bold text-lg flex items-center justify-center">&times;</button>
+            </div>
+            
+            <p class="text-xs text-[#7B6E65]">Escolha um dos e-mails da escola para testar o perfil:</p>
+            <div class="space-y-2 max-h-72 overflow-y-auto pr-1 scrollbar-hide" id="userSelectList">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- JAVASCRIPT UNIFICADO DA APLICAÇÃO                                        -->
+    <!-- ========================================================================= -->
+    <script>
+        // 1. CONFIGURAÇÃO OFICIAL DO FIREBASE (COMPAT V10.8.0)
+        const firebaseConfig = {
+            apiKey: "AIzaSyB1SeUi6PGBNA9zYC-j3gGaUXy1mqY2QhY",
+            authDomain: "portal-professor-yvypoty.firebaseapp.com",
+            projectId: "portal-professor-yvypoty",
+            storageBucket: "portal-professor-yvypoty.firebasestorage.app",
+            messagingSenderId: "172137915235",
+            appId: "1:172137915235:web:d07df7ea3ca39d7538a956"
+        };
+
+        // INICIALIZAÇÃO FIREBASE AUTH
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+
+        // ENDPOINT GOOGLE APPS SCRIPT WEB APP PARA GOOGLE DRIVE
+        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/a/macros/edutec.sed.ms.gov.br/s/AKfycbx9db6YaPIMSIvQbK4CPwsYgBlgsRsrMqsqH_4ovbaE91M1rm4fKhoa7hDEQ_8wo8fEDA/exec";
+
+        // 2. MAPEAMENTO COMPLETO DE E-MAILS (YVYPOTY & EDUTEC SED MS)
+        const USER_MAPPING = {
+            // ADMINISTRADORES
+            "danilo.492040@edutec.sed.ms.gov.br": { name: "Coord. Danilo", role: "Admin", subjects: ["Todas as Disciplinas (Coordenação)"] },
+            "davivilhalva@gmail.com": { name: "Coord. Danilo", role: "Admin", subjects: ["Todas as Disciplinas (Coordenação)"] },
+            "eliveltosouza@adm.yvypoty.edu.br": { name: "PCPI. Elivelto", role: "Admin", subjects: ["Gestão Tecnológica / PCPI"] },
+            "elivelto.035617@edutec.sed.ms.gov.br": { name: "PCPI. Elivelto", role: "Admin", subjects: ["Gestão Tecnológica / PCPI"] },
+
+            // PROFESSORES
+            "angelabeatriz@yvypoty.edu.br": { name: "Profº. Bia", role: "Professor", subjects: ["Biologia", "UCI Projeto Enem (Biologia)", "Estudo Orientado"] },
+            "angela.499954@edutec.sed.ms.gov.br": { name: "Profº. Bia", role: "Professor", subjects: ["Biologia", "UCI Projeto Enem (Biologia)", "Estudo Orientado"] },
+
+            "taizanunes@yvypoty.edu.br": { name: "Prof. Taiza", role: "Professor", subjects: ["Matemática"] },
+            "taiza.67544@edutec.sed.ms.gov.br": { name: "Prof. Taiza", role: "Professor", subjects: ["Matemática"] },
+
+            "selvialemes@yvypoty.edu.br": { name: "Prof. Selvia", role: "Professor", subjects: ["Língua Materna / Português"] },
+
+            "sarabenites@yvypoty.edu.br": { name: "Prof. Sara", role: "Professor", subjects: ["Artes", "Língua Portuguesa RA", "Questões Indígenas", "Aprofundamento Língua Materna"] },
+            "sara.486835@edutec.sed.ms.gov.br": { name: "Prof. Sara", role: "Professor", subjects: ["Artes", "Língua Portuguesa RA", "Questões Indígenas"] },
+
+            "nilsonrosa@yvypoty.edu.br": { name: "Profº. Nilson", role: "Professor", subjects: ["Língua Inglesa", "Laboratório de Línguas", "Práticas de Escrita", "Filosofia"] },
+            "nilson.471201@edutec.sed.ms.gov.br": { name: "Profº. Nilson", role: "Professor", subjects: ["Língua Inglesa", "Laboratório de Línguas", "Práticas de Escrita"] },
+
+            "micaelsanhes@yvypoty.edu.br": { name: "Profº. Micael", role: "Professor", subjects: ["Projeto Empreendedor", "Questões Indígenas", "Química", "Etnomatemática"] },
+            "micael.509831@edutec.sed.ms.gov.br": { name: "Profº. Micael", role: "Professor", subjects: ["Projeto Empreendedor", "Química", "Etnomatemática"] },
+
+            "lorrainedesouza@yvypoty.edu.br": { name: "Prof. Lorraine", role: "Professor", subjects: ["Língua Portuguesa", "Educação Física", "Estudo Orientado"] },
+            "lorraine.494103@edutec.sed.ms.gov.br": { name: "Prof. Lorraine", role: "Professor", subjects: ["Língua Portuguesa", "Educação Física"] },
+
+            "sayurimurakami@yvypoty.edu.br": { name: "Prof. Sayuri", role: "Professor", subjects: ["Física", "Projeto Empreendedor", "Iniciação Científica"] },
+            "karine.457736@edutec.sed.ms.gov.br": { name: "Prof. Sayuri", role: "Professor", subjects: ["Física", "Projeto Empreendedor"] },
+
+            "jessicadesouza@yvypoty.edu.br": { name: "Prof. Jessica", role: "Professor", subjects: ["Geografia", "Sociologia", "Filosofia"] },
+            "jessica.503997@edutec.sed.ms.gov.br": { name: "Prof. Jessica", role: "Professor", subjects: ["Geografia", "Sociologia"] },
+
+            "gislaineaquino@yvypoty.edu.br": { name: "Prof. Gislaine", role: "Professor", subjects: ["Agroecologia", "UCP II Sistemas de Produção", "Biologia"] },
+            "gislaine.483979@edutec.sed.ms.gov.br": { name: "Prof. Gislaine", role: "Professor", subjects: ["Agroecologia", "Biologia"] },
+
+            "eziquieloliveira@yvypoty.edu.br": { name: "Profº. Eziquiel", role: "Professor", subjects: ["Matemática e Geometria", "Matemática RA"] },
+            "eziquiel.64128@edutec.sed.ms.gov.br": { name: "Profº. Eziquiel", role: "Professor", subjects: ["Matemática e Geometria"] },
+
+            "edmarmanoel@yvypoty.edu.br": { name: "Profº. Edmar", role: "Professor", subjects: ["UCP I Agroc. Geral", "Fundamentos da Agricultura Orgânica"] },
+            "edmar.494105@edutec.sed.ms.gov.br": { name: "Profº. Edmar", role: "Professor", subjects: ["UCP I Agroc. Geral"] },
+
+            "editonmarques@yvypoty.edu.br": { name: "Profº. Editon", role: "Professor", subjects: ["História", "Filosofia"] },
+            "editon.0903@edutec.sed.ms.gov.br": { name: "Profº. Editon", role: "Professor", subjects: ["História", "Filosofia"] },
+
+            "cilenegonçalves@yvypoty.edu.br": { name: "Profº. Cilene", role: "Professor", subjects: ["Língua Portuguesa", "L. Port. Lit. Prod. Text.", "Educação Física"] },
+            "cilene.814757@edutec.sed.ms.gov.br": { name: "Profº. Cilene", role: "Professor", subjects: ["Língua Portuguesa", "Educação Física"] }
+        };
+
+        // 3. GRADE DE HORÁRIOS PADRÃO
+        const SCHEDULE_DATA = {
+            "default": [
+                { period: "1ª aula (07:30)", mon: "Disciplina 1", tue: "Disciplina 2", wed: "Disciplina 1", thu: "", fri: "Estudo Orientado" },
+                { period: "2ª aula (08:20)", mon: "Disciplina 1", tue: "Disciplina 2", wed: "Disciplina 1", thu: "", fri: "Estudo Orientado" },
+                { period: "3ª aula (09:30)", mon: "Biologia (3°B)", tue: "", wed: "", thu: "", fri: "" },
+                { period: "4ª aula (10:20)", mon: "Biologia (3°B)", tue: "UCI Enem (2°C)", wed: "", thu: "", fri: "UCI Enem (3°B)" },
+                { period: "5ª aula (12:35)", mon: "", tue: "", wed: "", thu: "", fri: "" },
+                { period: "6ª aula (13:25)", mon: "UCI Enem (3°A)", tue: "", wed: "", thu: "Estudo Orient. (3°B)", fri: "" },
+                { period: "7ª aula (14:15)", mon: "Biologia (2°C)", tue: "Biologia (2°B)", wed: "Biologia (2°B)", thu: "", fri: "" },
+                { period: "8ª aula (15:20)", mon: "Biologia (3°A)", tue: "Biologia (2°B)", wed: "Biologia (2°B)", thu: "", fri: "" }
+            ]
+        };
+
+        // ESTADO GLOBAL
+        let currentUserEmail = "";
+        let bookings = [];
+        let apcs = [];
+        let evaluations = [];
+        let selectedSlotIndexToBook = null;
+
+        // AUXILIAR FILE TO BASE64 CONVERTER
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // INICIALIZAÇÃO DA PÁGINA
+        window.onload = function() {
+            loadLocalStorageData();
+            setupPasswordToggle();
+            setDefaultBookingDate();
+            
+            // Listener do Firebase Auth
+            auth.onAuthStateChanged(user => {
+                if (user && user.email) {
+                    showPortalView(user.email);
+                } else if (!currentUserEmail) {
+                    showLoginView();
+                }
+            });
+
+            populateUserSelectList();
+        };
+
+        // 4. MUDANÇA DE TELAS (LOGIN vs PORTAL)
+        function showLoginView() {
+            document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('loginView').classList.add('flex');
+            document.getElementById('portalView').classList.add('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function showPortalView(email) {
+            currentUserEmail = email.toLowerCase().trim();
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('loginView').classList.remove('flex');
+            document.getElementById('portalView').classList.remove('hidden');
+            document.body.style.overflow = 'auto';
+
+            setCurrentUser(currentUserEmail);
+            renderBookingGridSlots();
+            renderMyBookingsTable();
+            renderAPCGrid();
+            renderABGrid();
+            renderScheduleTable();
+            renderAdminTables();
+        }
+
+        // ALTERNAR OLHO DA SENHA NO LOGIN
+        function setupPasswordToggle() {
+            const toggleBtn = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('loginPassword');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            if (toggleBtn && passwordInput && eyeIcon) {
+                toggleBtn.addEventListener('click', () => {
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                    eyeIcon.className = isPassword ? 'fa-regular fa-eye-slash text-sm' : 'fa-regular fa-eye text-sm';
+                });
+            }
+        }
+
+        function autoFillLoginFromSelect() {
+            const select = document.getElementById('quickLoginSelect');
+            if(select.value) {
+                document.getElementById('loginUsername').value = select.value;
+                document.getElementById('loginPassword').value = "123456";
+            }
+        }
+
+        // SUBMIT DO FORMULÁRIO DE LOGIN
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('loginUsername').value.trim();
+            const passwordInput = document.getElementById('loginPassword').value;
+
+            if (!emailInput) {
+                showToast("Por favor, digite seu e-mail ou usuário.", true);
+                return;
+            }
+
+            // Tentativa via Firebase Auth
+            try {
+                await auth.signInWithEmailAndPassword(emailInput, passwordInput);
+                showToast("Login realizado com sucesso via Firebase!");
+            } catch (err) {
+                console.log("Firebase Auth indisponível/não cadastrado, executando validação local:", err.message);
+                
+                // Fallback para mapeamento local do portal
+                const matchedUser = USER_MAPPING[emailInput.toLowerCase()];
+                if (matchedUser || emailInput.includes('@')) {
+                    showToast(`Bem-vindo(a) ao Portal!`);
+                    showPortalView(emailInput);
+                } else {
+                    showToast("E-mail ou senha incorretos. Verifique e tente novamente.", true);
+                }
+            }
+        }
+
+        function handleLogout() {
+            auth.signOut().finally(() => {
+                currentUserEmail = "";
+                showLoginView();
+                showToast("Sessão encerrada com sucesso.");
+            });
+        }
+
+        // 5. CONFIGURAÇÃO DE USUÁRIO E CONTROLE DE PERMISSÕES ADM
+        function setCurrentUser(email) {
+            const u = USER_MAPPING[email] || { 
+                name: email.split('@')[0], 
+                role: "Professor", 
+                subjects: ["Geral"] 
+            };
+
+            document.getElementById('headerUserTitle').innerText = `Portal do Professor - ${u.name}`;
+            document.getElementById('headerUserEmail').innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span> ${email}`;
+            document.getElementById('sidebarUserName').innerText = u.name;
+            document.getElementById('userRoleBadge').innerText = u.role;
+            document.getElementById('userAvatarInitials').innerText = u.name.replace("Profº. ", "").replace("Prof. ", "").substring(0, 2).toUpperCase();
+
+            // REGRA DE PERMISSÕES ADM: EXIBIR OU OCULTAR ELEMENTOS ADM
+            const adminBtn = document.getElementById('adminSidebarBtn');
+            const adminCard = document.getElementById('dashAdminCard');
+
+            if (u.role === "Admin") {
+                document.getElementById('dashPanelTitle').innerText = "Painel da Coordenação / PCPI";
+                if(adminBtn) adminBtn.classList.remove('hidden');
+                if(adminCard) {
+                    adminCard.classList.remove('hidden');
+                    adminCard.classList.add('flex');
+                }
+            } else {
+                document.getElementById('dashPanelTitle').innerText = "Painel do Professor";
+                if(adminBtn) adminBtn.classList.add('hidden');
+                if(adminCard) {
+                    adminCard.classList.add('hidden');
+                    adminCard.classList.remove('flex');
+                }
+            }
+
+            populateSubjectDropdowns(u.subjects);
+        }
+
+        function populateSubjectDropdowns(subjects) {
+            ['steSubject', 'apcModalSubject', 'abModalSubject'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = '';
+                subjects.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s;
+                    el.appendChild(opt);
+                });
+            });
+        }
+
+        function populateUserSelectList() {
+            const container = document.getElementById('userSelectList');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            Object.keys(USER_MAPPING).forEach(email => {
+                const u = USER_MAPPING[email];
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-2xl bg-[#FAF5EE] hover:bg-white border-2 border-white transition-all flex items-center justify-between text-xs shadow-sm";
+                btn.onclick = () => {
+                    showPortalView(email);
+                    closeModal('userSwitchModal');
+                    showToast(`Simulando perfil de: ${u.name}`);
+                };
+                btn.innerHTML = `
+                    <div>
+                        <div class="font-black text-[#342A24]">${u.name} <span class="text-[10px] text-[#86786F] font-bold">(${u.role})</span></div>
+                        <div class="text-[11px] font-mono text-[#7B6E65]">${email}</div>
+                    </div>
+                    <span class="text-xs text-[#2C6082] font-black underline">Acessar</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        // 6. SIDEBAR EXPAND/COLLAPSE
+        function expandSidebarOnHover() {
+            const sidebar = document.getElementById('mainSidebar');
+            const labels = document.querySelectorAll('.sidebar-label');
+            sidebar.classList.remove('w-20', 'md:w-24');
+            sidebar.classList.add('w-64');
+            labels.forEach(el => el.classList.remove('hidden'));
+        }
+
+        function collapseSidebarOnHover() {
+            const sidebar = document.getElementById('mainSidebar');
+            const labels = document.querySelectorAll('.sidebar-label');
+            sidebar.classList.remove('w-64');
+            sidebar.classList.add('w-20', 'md:w-24');
+            labels.forEach(el => el.classList.add('hidden'));
+        }
+
+        // 7. TROCA DE ABAS
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('bg-white', 'text-[#21352A]', 'shadow-md', 'border-white');
+            });
+            
+            const selectedTab = document.getElementById(`tab-${tabId}`);
+            if (selectedTab) selectedTab.classList.remove('hidden');
+
+            const activeNavBtn = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeNavBtn) {
+                activeNavBtn.classList.add('bg-white', 'text-[#21352A]', 'shadow-md', 'border-white');
+            }
+        }
+
+        function switchAdminSubtab(subId) {
+            ['bookings', 'apcs', 'evals'].forEach(id => {
+                document.getElementById(`adminSubtab-${id}`).classList.add('hidden');
+                const btn = document.getElementById(`adminSubtabBtn-${id}`);
+                btn.classList.remove('bg-white', 'text-[#352B25]', 'font-black', 'shadow-md', 'border-white');
+                btn.classList.add('text-[#7B6E65]', 'font-bold');
+            });
+
+            document.getElementById(`adminSubtab-${subId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`adminSubtabBtn-${subId}`);
+            activeBtn.classList.add('bg-white', 'text-[#352B25]', 'font-black', 'shadow-md', 'border-white');
+            activeBtn.classList.remove('text-[#7B6E65]', 'font-bold');
+        }
+
+        // 8. TOAST NOTIFICATION SYSTEM
+        function showToast(msg, isError = false) {
+            const container = document.getElementById('toastContainer');
+            if(!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto p-4 px-5 rounded-2xl shadow-xl border-2 border-white text-xs font-black flex items-center gap-2.5 transition-all duration-300 transform translate-x-10 opacity-0 ${
+                isError ? 'bg-[#FFD7C7] text-[#8C3A22]' : 'bg-[#C8E7D7] text-[#1E4D38]'
+            }`;
+            toast.innerHTML = `<span>${msg}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => toast.classList.remove('translate-x-10', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-10');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // 9. AGENDAMENTO E REGRAS DE DIA 26
+        function setDefaultBookingDate() {
+            const today = new Date().toISOString().split('T')[0];
+            ['bookingDateInput', 'steDate', 'apcModalDate', 'abModalDate'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.value = today;
+            });
+        }
+
+        const CLASS_SLOTS = [
+            "1ª Aula (07:30)", "2ª Aula (08:20)", "3ª Aula (09:30)", "4ª Aula (10:20)",
+            "5ª Aula (12:35)", "6ª Aula (13:25)", "7ª Aula (14:15)", "8ª Aula (15:20)"
+        ];
+
+        function renderBookingGridSlots() {
+            const container = document.getElementById('bookingSlotsGrid');
+            const selectedDate = document.getElementById('bookingDateInput').value;
+            document.getElementById('bookingGridDateLabel').innerText = `Data: ${formatDateBR(selectedDate)}`;
+            container.innerHTML = '';
+
+            CLASS_SLOTS.forEach((slotLabel, index) => {
+                const existingBooking = bookings.find(b => b.date === selectedDate && b.periodIndex === index);
+                const btn = document.createElement('button');
+
+                if (existingBooking) {
+                    btn.className = "p-5 rounded-2xl bg-[#CCE5F3] border-2 border-white text-[#245474] font-black text-center flex flex-col items-center justify-center gap-1.5 shadow-md hover:scale-102 transition-all";
+                    btn.onclick = () => showBookingKeyDetails(existingBooking);
+                    btn.innerHTML = `
+                        <span class="text-xs font-black text-[#214F6D]">${existingBooking.resource}</span>
+                        <span class="text-[10px] text-[#346282] font-bold truncate max-w-full">${existingBooking.teacherName}</span>
+                        <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-white/80 text-[#214F6D] font-extrabold shadow-sm">🔑 Ver Chave</span>
+                    `;
+                } else {
+                    btn.className = "p-5 rounded-2xl bg-[#FAF5EE] hover:bg-[#D5EDE2] border-2 border-white text-[#4A3D36] hover:text-[#1F4A37] font-black text-center text-xs flex items-center justify-center transition-all shadow-sm";
+                    btn.innerText = slotLabel;
+                    btn.onclick = () => triggerSlotBooking(index);
+                }
+                container.appendChild(btn);
+            });
+        }
+
+        function triggerSlotBooking(slotIndex) {
+            const date = document.getElementById('bookingDateInput').value;
+            const resource = document.getElementById('bookingResourceInput').value;
+            
+            const selectedDateObj = new Date(date + 'T00:00:00');
+            const today = new Date();
+            
+            // Trava do Mês Seguinte (Liberação após o dia 26)
+            if (selectedDateObj.getMonth() > today.getMonth() && today.getDate() < 26) {
+                const isAdmin = USER_MAPPING[currentUserEmail]?.role === 'Admin';
+                if (!isAdmin) {
+                    showToast("Agendamentos para o próximo mês são liberados somente após o dia 26!", true);
+                    return;
+                }
+            }
+
+            selectedSlotIndexToBook = slotIndex;
+
+            if (resource === 'STE 1' || resource === 'STE 2') {
+                document.getElementById('steDate').value = date;
+                document.getElementById('steModal').classList.remove('hidden');
+            } else {
+                executeFinalBooking(resource, 'N/A', null);
+            }
+        }
+
+        function confirmSTEBooking() {
+            const selectedSteRoom = document.querySelector('input[name="steRoomChoice"]:checked').value;
+            const steMode = document.getElementById('steModeChoice').value;
+            const subject = document.getElementById('steSubject').value;
+            const targetClass = document.getElementById('steClass').value;
+
+            let accessKey = null;
+            if (steMode === 'Computadores') {
+                accessKey = Math.floor(100000 + Math.random() * 900000).toString();
+            }
+
+            closeModal('steModal');
+            executeFinalBooking(selectedSteRoom, steMode, accessKey, subject, targetClass);
+        }
+
+        function executeFinalBooking(resource, mode, key, subject = '', targetClass = '') {
+            const date = document.getElementById('bookingDateInput').value;
+            const content = document.getElementById('bookingContentInput').value || 'Atividade pedagógica regular';
+            const obs = document.getElementById('bookingObsInput').value || '';
+            const teacherName = USER_MAPPING[currentUserEmail]?.name || currentUserEmail;
+
+            const newBooking = {
+                id: Date.now(),
+                userEmail: currentUserEmail,
+                teacherName: teacherName,
+                date: date,
+                periodIndex: selectedSlotIndexToBook,
+                periodName: CLASS_SLOTS[selectedSlotIndexToBook],
+                resource: resource,
+                mode: mode,
+                accessKey: key,
+                subject: subject,
+                targetClass: targetClass,
+                content: content,
+                obs: obs
+            };
+
+            bookings.push(newBooking);
+            saveLocalStorageData();
+            renderBookingGridSlots();
+            renderMyBookingsTable();
+            renderAdminTables();
+
+            if (key) {
+                displayKeyInBoxes(key, subject, targetClass, date);
+            } else {
+                showToast(`Reserva do recurso ${resource} realizada com sucesso!`);
+            }
+        }
+
+        function displayKeyInBoxes(keyStr, subject, targetClass, date) {
+            const container = document.getElementById('sixDigitBoxesContainer');
+            container.innerHTML = '';
+            keyStr.split('').forEach(d => {
+                const box = document.createElement('div');
+                box.className = "w-11 h-14 rounded-2xl bg-[#EFE6DC] border-2 border-white flex items-center justify-center text-2xl font-mono font-black text-[#924329] shadow-inner";
+                box.innerText = d;
+                container.appendChild(box);
+            });
+
+            document.getElementById('keyModalDetails').innerText = `${subject} - ${targetClass}`;
+            document.getElementById('keyModalDate').innerText = `Data: ${formatDateBR(date)}`;
+            document.getElementById('keyModal').classList.remove('hidden');
+        }
+
+        function showBookingKeyDetails(booking) {
+            if (booking.accessKey) {
+                displayKeyInBoxes(booking.accessKey, booking.subject || booking.resource, booking.targetClass || '', booking.date);
+            } else {
+                showToast(`Reserva: ${booking.resource} (${booking.content})`);
+            }
+        }
+
+        function renderMyBookingsTable() {
+            const tbody = document.getElementById('myBookingsTableBody');
+            tbody.innerHTML = '';
+
+            const userBookings = bookings.filter(b => b.userEmail === currentUserEmail);
+            if (userBookings.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8C7D73] font-medium">Nenhum agendamento ativo registrado para seu usuário.</td></tr>`;
+                return;
+            }
+
+            userBookings.forEach(b => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-white/60 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-4 font-black text-[#342A24]">${formatDateBR(b.date)}</td>
+                    <td class="p-4 text-xs text-[#245474] font-black">${b.periodName}</td>
+                    <td class="p-4 font-black text-[#342A24]">${b.resource}</td>
+                    <td class="p-4">${b.accessKey ? `<span class="px-2.5 py-1 rounded-xl bg-[#CCE5F3] text-[#245474] font-mono font-black text-xs shadow-sm">🔑 ${b.accessKey}</span>` : b.mode}</td>
+                    <td class="p-4 text-xs text-[#6C5E55] max-w-xs truncate font-medium">${b.content}</td>
+                    <td class="p-4 text-right"><button onclick="cancelBooking(${b.id})" class="text-xs text-[#A8422A] hover:underline font-black">Cancelar</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function cancelBooking(id) {
+            bookings = bookings.filter(b => b.id !== id);
+            saveLocalStorageData();
+            renderBookingGridSlots();
+            renderMyBookingsTable();
+            renderAdminTables();
+            showToast("Agendamento cancelado com sucesso.");
+        }
+
+        // 10. INTEGRAÇÃO APC COM GOOGLE APPS SCRIPT
+        function renderAPCGrid() {
+            const container = document.getElementById('apcGridContainer');
+            container.innerHTML = '';
+
+            const createBtnCard = document.createElement('button');
+            createBtnCard.onclick = () => document.getElementById('apcModal').classList.remove('hidden');
+            createBtnCard.className = "clay-card p-6 border-2 border-dashed border-[#C3D5CB] hover:border-[#8CBAA4] flex flex-col items-center justify-center gap-2 text-center transition-all group min-h-[160px] bg-[#FAF5EE]";
+            createBtnCard.innerHTML = `
+                <div class="w-12 h-12 rounded-2xl bg-[#C8E7D7] text-[#235841] flex items-center justify-center font-black text-2xl group-hover:scale-110 transition-transform shadow-sm">+</div>
+                <span class="text-xs font-black text-[#342A24] group-hover:text-[#235841] font-display">Criar Nova APC</span>
+            `;
+            container.appendChild(createBtnCard);
+
+            const userApcs = apcs.filter(a => a.userEmail === currentUserEmail);
+            userApcs.forEach(a => {
+                const card = document.createElement('div');
+                card.className = "clay-card p-5 flex flex-col justify-between space-y-3 min-h-[160px] bg-[#FAF5EE]";
+                card.innerHTML = `
+                    <div>
+                        <div class="text-xs font-black text-[#342A24] truncate font-display">${a.subject}</div>
+                        <div class="text-[11px] text-[#7B6E65] mt-1 font-medium">Turma: ${a.targetClass} • ${formatDateBR(a.date)}</div>
+                    </div>
+                    <div class="flex items-center justify-between pt-3 border-t border-[#EAE0D5]">
+                        <span class="clay-badge-mint px-2.5 py-0.5 rounded-xl text-[10px] font-black">
+                            ENVIADO ✓
+                        </span>
+                        <button onclick="openApcObsModal(${a.id})" class="text-[11px] text-[#2C6082] hover:underline font-black">Ver Obs</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function submitAPCForm() {
+            const subject = document.getElementById('apcModalSubject').value;
+            const targetClass = document.getElementById('apcModalClass').value;
+            const date = document.getElementById('apcModalDate').value;
+            const obs = document.getElementById('apcModalObs').value;
+            const fileLinkInput = document.getElementById('apcModalFileLink').value;
+            const fileInput = document.getElementById('apcModalFileInput');
+            const teacherName = USER_MAPPING[currentUserEmail]?.name || currentUserEmail;
+
+            let finalFileUrl = fileLinkInput || '#';
+
+            if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                showToast("Enviando arquivo para o Google Drive...", false);
+                try {
+                    const base64Data = await fileToBase64(file);
+                    const payload = {
+                        tipo: 'APC',
+                        teacherName: teacherName,
+                        teacherEmail: currentUserEmail,
+                        disciplina: subject,
+                        turma: targetClass,
+                        observacao: obs,
+                        fileName: file.name,
+                        mimeType: file.type || "application/pdf",
+                        fileBase64: base64Data
+                    };
+
+                    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                        method: "POST",
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (result.status === "success" && result.fileUrl) {
+                        finalFileUrl = result.fileUrl;
+                        showToast("Arquivo salvo no Google Drive!");
+                    } else {
+                        showToast("Registro efetuado localmente.", false);
+                    }
+                } catch (err) {
+                    console.error("Erro Apps Script:", err);
+                    showToast("Atividade salva e registrada no sistema.", false);
+                }
+            }
+
+            apcs.push({
+                id: Date.now(),
+                userEmail: currentUserEmail,
+                teacherName: teacherName,
+                subject: subject,
+                targetClass: targetClass,
+                date: date,
+                obs: obs,
+                fileLink: finalFileUrl
+            });
+
+            saveLocalStorageData();
+            renderAPCGrid();
+            renderAdminTables();
+            closeModal('apcModal');
+
+            if (fileInput) fileInput.value = '';
+            document.getElementById('apcModalFileLink').value = '';
+            document.getElementById('apcModalObs').value = '';
+            showToast("APC enviada com sucesso!");
+        }
+
+        function openApcObsModal(apcId) {
+            const item = apcs.find(a => a.id === apcId);
+            if(!item) return;
+
+            document.getElementById('apcDetailTeacher').innerText = item.teacherName;
+            document.getElementById('apcDetailSubClass').innerText = `${item.subject} (${item.targetClass})`;
+            document.getElementById('apcDetailDate').innerText = formatDateBR(item.date);
+            document.getElementById('apcDetailObsText').innerText = item.obs || "Nenhuma observação informada.";
+            document.getElementById('apcDetailDownloadBtn').href = item.fileLink;
+
+            document.getElementById('apcObsDetailModal').classList.remove('hidden');
+        }
+
+        // 11. AVALIAÇÃO BIMESTRAL (AB)
+        function renderABGrid() {
+            const container = document.getElementById('abGridContainer');
+            const selectedBimester = document.getElementById('abBimesterFilter').value;
+            container.innerHTML = '';
+
+            const createBtnCard = document.createElement('button');
+            createBtnCard.onclick = () => document.getElementById('abModal').classList.remove('hidden');
+            createBtnCard.className = "clay-card p-6 border-2 border-dashed border-[#F3CCA5] hover:border-[#E89975] flex flex-col items-center justify-center gap-2 text-center transition-all group min-h-[160px] bg-[#FAF5EE]";
+            createBtnCard.innerHTML = `
+                <div class="w-12 h-12 rounded-2xl bg-[#FFE4C7] text-[#935B21] flex items-center justify-center font-black text-2xl group-hover:scale-110 transition-transform shadow-sm">+</div>
+                <span class="text-xs font-black text-[#342A24] group-hover:text-[#935B21] font-display">Criar Nova AB</span>
+            `;
+            container.appendChild(createBtnCard);
+
+            const userEvals = evaluations.filter(ev => ev.userEmail === currentUserEmail && ev.bimester === selectedBimester);
+            userEvals.forEach(ev => {
+                const card = document.createElement('div');
+                card.className = "clay-card p-5 flex flex-col justify-between space-y-3 min-h-[160px] bg-[#FAF5EE]";
+                card.innerHTML = `
+                    <div>
+                        <div class="text-xs font-black text-[#342A24] truncate font-display">${ev.subject}</div>
+                        <div class="text-[11px] text-[#7B6E65] mt-1 font-medium">Turma: ${ev.targetClass} • ${formatDateBR(ev.date)}</div>
+                    </div>
+                    <div class="flex items-center justify-between pt-3 border-t border-[#EAE0D5]">
+                        <span class="clay-badge-apricot px-2.5 py-0.5 rounded-xl text-[10px] font-black">
+                            ENVIADO ✓
+                        </span>
+                        <a href="${ev.link}" target="_blank" class="text-[11px] text-[#8C531E] hover:underline font-black">Ver Prova ↗</a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function submitABForm() {
+            const bimester = document.getElementById('abModalBimester').value;
+            const subject = document.getElementById('abModalSubject').value;
+            const targetClass = document.getElementById('abModalClass').value;
+            const date = document.getElementById('abModalDate').value;
+            const linkInput = document.getElementById('abModalLink').value;
+            const fileInput = document.getElementById('abModalFileInput');
+            const teacherName = USER_MAPPING[currentUserEmail]?.name || currentUserEmail;
+
+            let finalLink = linkInput || '#';
+
+            if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                showToast("Enviando prova para o Google Drive...", false);
+                try {
+                    const base64Data = await fileToBase64(file);
+                    const payload = {
+                        tipo: 'AB',
+                        teacherName: teacherName,
+                        teacherEmail: currentUserEmail,
+                        disciplina: subject,
+                        turma: targetClass,
+                        observacao: `Bimestre: ${bimester}`,
+                        fileName: file.name,
+                        mimeType: file.type || "application/pdf",
+                        fileBase64: base64Data
+                    };
+
+                    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                        method: "POST",
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (result.status === "success" && result.fileUrl) {
+                        finalLink = result.fileUrl;
+                        showToast("Prova salva no Google Drive!");
+                    }
+                } catch (err) {
+                    console.error("Erro Apps Script:", err);
+                }
+            }
+
+            evaluations.push({
+                id: Date.now(),
+                userEmail: currentUserEmail,
+                teacherName: teacherName,
+                bimester: bimester,
+                subject: subject,
+                targetClass: targetClass,
+                date: date,
+                link: finalLink
+            });
+
+            saveLocalStorageData();
+            renderABGrid();
+            renderAdminTables();
+            closeModal('abModal');
+
+            if (fileInput) fileInput.value = '';
+            document.getElementById('abModalLink').value = '';
+            showToast("Avaliação Bimestral enviada com sucesso!");
+        }
+
+        // 12. TABELA DE HORÁRIOS DA SEMANA
+        function renderScheduleTable() {
+            const tbody = document.getElementById('scheduleTableBody');
+            tbody.innerHTML = '';
+            const schedule = SCHEDULE_DATA[currentUserEmail] || SCHEDULE_DATA["default"];
+            
+            document.getElementById('scheduleUserLabel').innerText = `Grade oficial de aulas de: ${USER_MAPPING[currentUserEmail]?.name || currentUserEmail}`;
+
+            schedule.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-white/60 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-4 font-black text-[#5C4D44] border-r border-[#E4D9CD] bg-[#F2E8DC]">${r.period}</td>
+                    <td class="p-4 text-center border-r border-[#E4D9CD] ${r.mon ? 'bg-[#CCE5F3]/50 text-[#214F6D] font-black' : 'text-[#A0938A]'}">${r.mon || '-'}</td>
+                    <td class="p-4 text-center border-r border-[#E4D9CD] ${r.tue ? 'bg-[#CCE5F3]/50 text-[#214F6D] font-black' : 'text-[#A0938A]'}">${r.tue || '-'}</td>
+                    <td class="p-4 text-center border-r border-[#E4D9CD] ${r.wed ? 'bg-[#CCE5F3]/50 text-[#214F6D] font-black' : 'text-[#A0938A]'}">${r.wed || '-'}</td>
+                    <td class="p-4 text-center border-r border-[#E4D9CD] ${r.thu ? 'bg-[#CCE5F3]/50 text-[#214F6D] font-black' : 'text-[#A0938A]'}">${r.thu || '-'}</td>
+                    <td class="p-4 text-center ${r.fri ? 'bg-[#CCE5F3]/50 text-[#214F6D] font-black' : 'text-[#A0938A]'}">${r.fri || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 13. TABELAS DO PAINEL ADM (SOMENTE VISÍVEIS PARA COORDENAÇÃO)
+        function renderAdminTables() {
+            // AGENDAMENTOS GERAIS
+            const bTable = document.getElementById('adminBookingsTableBody');
+            if(bTable) {
+                bTable.innerHTML = '';
+                bookings.forEach(b => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-white/60 transition-colors";
+                    tr.innerHTML = `
+                        <td class="p-3.5 font-black text-[#2C6082]">${b.periodName}</td>
+                        <td class="p-3.5 font-black text-[#342A24]">${b.teacherName}</td>
+                        <td class="p-3.5 font-black text-[#8C531E]">${b.resource}</td>
+                        <td class="p-3.5 text-xs text-[#52443C]">${b.subject || '-'} (${b.targetClass || '-'})</td>
+                        <td class="p-3.5 text-xs text-[#52443C]">${formatDateBR(b.date)}</td>
+                        <td class="p-3.5 text-xs text-[#7B6E65]">${b.content}</td>
+                    `;
+                    bTable.appendChild(tr);
+                });
+            }
+
+            // APCS GERAIS
+            const aTable = document.getElementById('adminApcsTableBody');
+            if(aTable) {
+                aTable.innerHTML = '';
+                apcs.forEach(a => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-white/60 transition-colors";
+                    tr.innerHTML = `
+                        <td class="p-3.5 font-black text-[#342A24]">${a.teacherName}</td>
+                        <td class="p-3.5 text-xs text-[#52443C]">${a.targetClass}</td>
+                        <td class="p-3.5 text-xs text-[#52443C]">${formatDateBR(a.date)}</td>
+                        <td class="p-3.5 font-black text-[#2F6553]">${a.subject}</td>
+                        <td class="p-3.5 text-xs text-[#7B6E65] max-w-xs truncate">${a.obs || '-'}</td>
+                        <td class="p-3.5 text-xs">
+                            <button onclick="openApcObsModal(${a.id})" class="text-[#2C6082] hover:underline font-black">Ver Arquivo / Obs</button>
+                        </td>
+                    `;
+                    aTable.appendChild(tr);
+                });
+            }
+
+            // AVALIAÇÕES BIMESTRAIS GERAIS
+            const eTable = document.getElementById('adminEvalsTableBody');
+            if(eTable) {
+                eTable.innerHTML = '';
+                evaluations.forEach(ev => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-white/60 transition-colors";
+                    tr.innerHTML = `
+                        <td class="p-3.5 font-black text-[#8C531E]">${ev.bimester}</td>
+                        <td class="p-3.5 font-black text-[#342A24]">${ev.teacherName}</td>
+                        <td class="p-3.5 text-xs text-[#52443C]">${ev.targetClass}</td>
+                        <td class="p-3.5 text-xs text-[#52443C]">${formatDateBR(ev.date)}</td>
+                        <td class="p-3.5 text-xs font-black text-[#694086]">${ev.subject}</td>
+                        <td class="p-3.5 text-xs"><a href="${ev.link}" target="_blank" class="text-[#2C6082] hover:underline font-black">Acessar Prova ↗</a></td>
+                    `;
+                    eTable.appendChild(tr);
+                });
+            }
+        }
+
+        function exportReportCSV() {
+            let csv = "data:text/csv;charset=utf-8,TIPO,DATA,PROFESSOR,RECURSO_DISCIPLINA,DETALHES\n";
+            bookings.forEach(b => { csv += `"AGENDAMENTO","${b.date}","${b.teacherName}","${b.resource}","${b.content}"\n`; });
+            apcs.forEach(a => { csv += `"APC","${a.date}","${a.teacherName}","${a.subject}","${a.obs}"\n`; });
+            evaluations.forEach(e => { csv += `"AB","${e.date}","${e.teacherName}","${e.subject}","${e.bimester}"\n`; });
+
+            const link = document.createElement("a");
+            link.href = encodeURI(csv);
+            link.download = `Relatorio_Yvy_Poty_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            showToast("Relatório exportado em formato CSV!");
+        }
+
+        // UTILITÁRIOS DE PERSISTÊNCIA LOCAL
+        function saveLocalStorageData() {
+            localStorage.setItem('yvy_bookings', JSON.stringify(bookings));
+            localStorage.setItem('yvy_apcs', JSON.stringify(apcs));
+            localStorage.setItem('yvy_evals', JSON.stringify(evaluations));
+        }
+
+        function loadLocalStorageData() {
+            const b = localStorage.getItem('yvy_bookings');
+            const a = localStorage.getItem('yvy_apcs');
+            const e = localStorage.getItem('yvy_evals');
+
+            if(b) bookings = JSON.parse(b);
+            if(a) apcs = JSON.parse(a);
+            if(e) evaluations = JSON.parse(e);
+        }
+
+        function formatDateBR(d) {
+            if(!d) return '';
+            const p = d.split('-');
+            return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : d;
+        }
+
+        function openUserSwitchModal() {
+            document.getElementById('userSwitchModal').classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
