@@ -13,6 +13,7 @@
     <!-- Firebase SDK (Compat v10.8.0) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
     <!-- Tailwind CSS v3 com plugins -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -1365,7 +1366,7 @@
                         <div class="clay-card p-5 bg-[#F8FAF9]">
                             <div class="text-xs font-black text-[#4B735E] uppercase">Total de Agendamentos</div>
                             <div class="text-3xl font-black text-[#1A2E23] mt-2" id="metricTotalBookings">0</div>
-                            <p class="text-[11px] text-[#698878] font-bold mt-1">Reservas ativas registradas</p>
+                            <p class="text-[11px] text-[#698878] font-bold mt-1">Reservas sincronizadas no Firebase</p>
                         </div>
                         <div class="clay-card p-5 bg-[#F8FAF9]">
                             <div class="text-xs font-black text-[#4B735E] uppercase">APCs Recebidas</div>
@@ -1387,6 +1388,69 @@
                             <i class="fa-solid fa-print"></i>
                             <span>Imprimir Relatório</span>
                         </button>
+                    </div>
+                </div>
+
+                <!-- CENTRAL DE INTEGRAÇÃO KIOSK STE (FIREBASE + CHAVE MESTRA OFFLINE) -->
+                <div class="clay-card p-6 md:p-8 border-2 border-[#C5DFD0]">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#E1ECE5]">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-12 h-12 rounded-2xl bg-[#D6E8DE] text-[#1E4B35] flex items-center justify-center text-xl shadow-inner shrink-0">
+                                <i class="fa-solid fa-desktop"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg md:text-xl font-black text-[#1A2E23] font-display">
+                                    Integração Computadores STE 1 &amp; STE 2 (Kiosk Electron + Firestore)
+                                </h3>
+                                <p class="text-xs font-bold text-[#5B7567]">
+                                    Sincronização em tempo real com os computadores das salas de tecnologia e códigos de contingência.
+                                </p>
+                            </div>
+                        </div>
+                        <span class="clay-badge-forest px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-2 self-start sm:self-auto" id="firestoreStatusBadge">
+                            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                            Firestore Ativo
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+                        <div class="p-5 rounded-2xl bg-[#F3F8F5] border border-[#CFDFD6] space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black uppercase text-[#24563F]">🔑 Chave Mestra Offline (Admin / PCPI)</span>
+                                <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black uppercase">Contingência Sem Internet</span>
+                            </div>
+                            <div class="text-2xl font-mono font-black text-[#1A2E23] tracking-widest pt-1">992026</div>
+                            <p class="text-xs text-[#546E60] font-semibold">
+                                Digite este código em qualquer computador da <strong>STE 1</strong> ou <strong>STE 2</strong> para desbloquear a máquina imediatamente (funciona 100% offline e em qualquer horário).
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-[#F3F8F5] border border-[#CFDFD6] space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black uppercase text-[#2E516B]">⚙️ Código para Trocar Sala no PC (STE 1 ↔ STE 2)</span>
+                                <span class="px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-black uppercase">Reconfiguração Local</span>
+                            </div>
+                            <div class="text-2xl font-mono font-black text-[#1A2E23] tracking-widest pt-1">000000</div>
+                            <p class="text-xs text-[#546E60] font-semibold">
+                                Se precisar mudar um computador de sala após instalado, digite <strong>000000</strong> nos campos de senha do Kiosk para reabrir a janela de escolha entre <strong>SALA STE 1</strong> e <strong>SALA STE 2</strong>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-5 border-t border-[#E1ECE5] flex flex-wrap items-center justify-between gap-4">
+                        <div class="text-xs font-bold text-[#486655]">
+                            Baixe os arquivos atualizados do seu projeto Electron já integrados ao Firebase Firestore e com Chave Mestra:
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button class="clay-btn clay-btn-forest px-4 py-2.5 text-xs font-black flex items-center gap-2" onclick="downloadKioskFile('index.html')">
+                                <i class="fa-solid fa-code"></i>
+                                <span>Baixar index.html (Kiosk STE)</span>
+                            </button>
+                            <button class="clay-btn bg-[#D9E5EE] text-[#1F3D55] px-4 py-2.5 text-xs font-black flex items-center gap-2 border border-white" onclick="downloadKioskFile('main.js')">
+                                <i class="fa-solid fa-Terminal"></i>
+                                <span>Baixar main.js (Electron)</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -1661,6 +1725,8 @@
             firebase.initializeApp(firebaseConfig);
         }
         const auth = firebase.auth();
+        const db = firebase.firestore();
+        const MASTER_ADMIN_KEY = "992026";
 
         // ENDPOINT GOOGLE APPS SCRIPT WEB APP PARA GOOGLE DRIVE (ATUALIZADO COM SUA NOVA IMPLANTAÇÃO)
         const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGPZnNmoLDwEKPm4lOSiXTeC7vKbyJpWDbEfEGDoNFVrhMjr4diNfAUF0i7hxOkSfgBw/exec";
@@ -1787,6 +1853,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadLocalStorageData();
             setDefaultDates();
+            initFirestoreBookingsListener();
 
             // Listener oficial do Firebase Authentication
             auth.onAuthStateChanged(user => {
@@ -1800,6 +1867,39 @@
                 }
             });
         });
+
+        // ESCUTA EM TEMPO REAL DOS AGENDAMENTOS NO FIREBASE FIRESTORE
+        function initFirestoreBookingsListener() {
+            try {
+                db.collection("agendamentos").onSnapshot(snapshot => {
+                    const remoteBookings = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        remoteBookings.push({
+                            ...data,
+                            firestoreDocId: doc.id
+                        });
+                    });
+
+                    if (remoteBookings.length > 0 || !snapshot.metadata.fromCache) {
+                        bookings = remoteBookings.sort((a, b) => (a.periodIndex || 0) - (b.periodIndex || 0));
+                        saveLocalStorageData();
+                        renderBookingGridSlots();
+                        renderMyBookingsTable();
+                        renderAdminAllBookings();
+                        updateAdminMetrics();
+                    }
+                }, err => {
+                    console.warn("Firestore ainda não ativado ou sem permissão de leitura, usando armazenamento local:", err.message);
+                    const badge = document.getElementById('firestoreStatusBadge');
+                    if (badge) {
+                        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500"></span> Modo Local (Ative o Firestore no Console)`;
+                    }
+                });
+            } catch (e) {
+                console.warn("Erro ao iniciar listener do Firestore:", e);
+            }
+        }
 
         // FUNÇÃO PARA SINCRONIZAR E BUSCAR ARQUIVOS ENVIADOS NO GOOGLE DRIVE / PLANILHAS (doGet)
         async function syncFilesFromGoogleDrive(silent = false) {
@@ -1847,35 +1947,17 @@
         }
 
         function setDefaultDates() {
-            const today = "2026-03-24";
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const today = `${yyyy}-${mm}-${dd}`;
             ['bookingDateInput', 'steDate', 'apcModalDate', 'abModalDate', 'apc-date-selector'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.value = today;
             });
         }
 
-        // 3. CONTROLE DA TELA DE LOGIN (login 002) E TRANSIÇÃO PARA O PORTAL
-        function togglePasswordVisibility() {
-            const passInput = document.getElementById('passwordInput');
-            const eyeIcon = document.getElementById('eyeIcon');
-            if (passInput.type === 'password') {
-                passInput.type = 'text';
-                eyeIcon.className = 'fa-regular fa-eye-slash text-xs';
-            } else {
-                passInput.type = 'password';
-                eyeIcon.className = 'fa-regular fa-eye text-xs';
-            }
-        }
-
-        function autoFillLogin() {
-            const sel = document.getElementById('quickLoginSelect').value;
-            if (sel) {
-                document.getElementById('usernameInput').value = sel;
-                document.getElementById('passwordInput').value = "123456";
-            }
-        }
-
-        async function handleLoginSubmit(event) {
         // 3. CONTROLE DA TELA DE LOGIN (login 002) E AUTENTICAÇÃO ESTRITA VIA FIREBASE
         function togglePasswordVisibility() {
             const passInput = document.getElementById('passwordInput');
@@ -2325,24 +2407,37 @@
             const obs = document.getElementById('bookingObsInput').value || '';
             const teacherName = USERS[currentUserEmail]?.name || "Professor";
 
+            // Normaliza código da sala STE para facilitar consulta do Kiosk ("STE1" ou "STE2")
+            const normalizedRoomCode = resource.replace(/\s+/g, '').toUpperCase();
+            const tipoUsoKiosk = mode.includes("Computadores") ? "COMPUTADORES" : (resource.includes("STE") ? "SALA" : "EQUIPAMENTO");
+
+            const bookingId = Date.now();
             const newBooking = {
-                id: Date.now(),
+                id: bookingId,
                 userEmail: currentUserEmail,
                 teacherName: teacherName,
                 date: date,
                 periodIndex: selectedSlotIndex,
                 periodName: CLASS_SLOTS[selectedSlotIndex],
                 resource: resource,
+                salaCodigo: normalizedRoomCode,
                 mode: mode,
+                tipoUso: tipoUsoKiosk,
                 accessKey: key,
                 subject: subject,
                 targetClass: targetClass,
                 content: content,
-                obs: obs
+                obs: obs,
+                createdAt: new Date().toISOString()
             };
 
             bookings.push(newBooking);
             saveLocalStorageData();
+
+            // Grava em tempo real no Firebase Firestore para os computadores do STE lerem instantaneamente
+            db.collection("agendamentos").doc(String(bookingId)).set(newBooking)
+                .catch(err => console.warn("Aviso ao salvar no Firestore:", err.message));
+
             renderBookingGridSlots();
             renderMyBookingsTable();
             renderAdminAllBookings();
@@ -2410,13 +2505,455 @@
         }
 
         function cancelBooking(id) {
-            bookings = bookings.filter(b => b.id !== id);
+            const target = bookings.find(b => String(b.id) === String(id));
+            bookings = bookings.filter(b => String(b.id) !== String(id));
             saveLocalStorageData();
+
+            // Remove do Firebase Firestore em tempo real (bloqueia os PCs daquela aula imediatamente)
+            const docIdToDelete = target?.firestoreDocId || String(id);
+            db.collection("agendamentos").doc(docIdToDelete).delete()
+                .catch(err => console.warn("Aviso ao remover do Firestore:", err.message));
+
             renderBookingGridSlots();
             renderMyBookingsTable();
             renderAdminAllBookings();
             updateAdminMetrics();
             showToast("Agendamento cancelado com sucesso.");
+        }
+
+        // GERADOR DOS ARQUIVOS DO SISTEMA DE BLOQUEIO KIOSK (index.html e main.js)
+        function downloadKioskFile(fileType) {
+            let content = "";
+            let filename = fileType;
+
+            if (fileType === 'main.js') {
+                content = `const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron');
+const path = require('path');
+const fs = require('fs');
+
+let mainWindow;
+const configPath = path.join(app.getPath('userData'), 'config.json');
+
+function getLocalConfig() {
+  if (fs.existsSync(configPath)) {
+    try {
+      return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+}
+
+function registerLockShortcuts() {
+  globalShortcut.register('Alt+Tab', () => {});
+  globalShortcut.register('Alt+F4', () => {});
+  globalShortcut.register('Escape', () => {});
+  globalShortcut.register('Super', () => {});
+}
+
+function createWindow() {
+  // Inicia automaticamente junto com o Windows
+  app.setLoginItemSettings({ openAtLogin: true });
+
+  mainWindow = new BrowserWindow({
+    width: 1280,
+    height: 720,
+    fullscreen: true,
+    kiosk: true,
+    alwaysOnTop: true,
+    frame: false,
+    resizable: false,
+    skipTaskbar: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  });
+
+  mainWindow.loadFile('index.html');
+  registerLockShortcuts();
+}
+
+ipcMain.on('solicitar-config-sala', (event) => {
+  event.reply('resposta-config-sala', getLocalConfig());
+});
+
+ipcMain.on('salvar-config-sala', (event, novaSala) => {
+  const dados = { sala_designada: novaSala };
+  fs.writeFileSync(configPath, JSON.stringify(dados, null, 2));
+  event.reply('config-salva-sucesso', dados);
+});
+
+// Desbloqueia a máquina quando a chave do professor ou a Chave Mestra (992026) é validada
+ipcMain.on('desbloquear-computador', () => {
+  globalShortcut.unregisterAll();
+  if (mainWindow) {
+    mainWindow.setKiosk(false);
+    mainWindow.setAlwaysOnTop(false);
+    mainWindow.minimize();
+  }
+});
+
+// Re-bloqueia automaticamente quando o horário da aula termina ou a reserva é cancelada
+ipcMain.on('bloquear-computador', () => {
+  registerLockShortcuts();
+  if (mainWindow) {
+    mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
+    mainWindow.setKiosk(true);
+    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+  }
+});
+
+app.whenReady().then(createWindow);
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit();
+});`;
+            } else {
+                content = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Terminal de Acesso - Sala STE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"><\/script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<!-- SDKs do Firebase para Sincronização em Tempo Real -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"><\/script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"><\/script>
+<style>
+  body { font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; }
+  .slot-input { box-shadow: inset 0 2px 4px rgba(0,0,0,0.35), 0 1px 2px rgba(255,255,255,0.8); caret-color: #60a5fa; }
+  .slot-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(10,116,218,0.45); border-color: #38bdf8; }
+</style>
+</head>
+<body class="min-h-screen w-full flex flex-col justify-between overflow-x-hidden text-slate-800 p-6 md:p-10 lg:p-12" style="background-color: rgb(23, 29, 51); position: relative;">
+  <header class="w-full flex items-center justify-between relative z-10">
+    <div class="px-5 py-2.5 rounded-2xl bg-white/75 backdrop-blur-md font-extrabold text-[#002e7a] text-sm shadow">
+      EEIEM Yvy Poty
+    </div>
+    <div class="text-center bg-white/75 backdrop-blur-md rounded-full px-8 py-2.5 shadow">
+      <h1 class="text-2xl md:text-3xl font-black text-[#002e7a]">
+        COMPUTADOR | <span id="titulo-nome-sala">Sala STE 1</span>
+      </h1>
+    </div>
+    <div class="px-5 py-2.5 rounded-2xl bg-white/75 backdrop-blur-md font-extrabold text-[#009245] text-xs shadow cursor-pointer" onclick="abrirSetupManual()" title="Configurar Sala">
+      SED / MS
+    </div>
+  </header>
+
+  <main class="w-full flex flex-col items-center justify-center my-auto py-6 relative z-10">
+    <div class="mb-6">
+      <div class="inline-flex items-center justify-center px-7 py-2 rounded-full bg-slate-600 text-white font-bold text-xs md:text-sm tracking-wider uppercase shadow-md" id="badge-status-aula">
+        VERIFICANDO AGENDAMENTO NO PORTAL...
+      </div>
+    </div>
+
+    <section class="w-full max-w-[700px] bg-white/85 backdrop-blur-md rounded-3xl p-7 md:p-9 mb-9 shadow-xl border border-white/60">
+      <div class="flex flex-col space-y-4 text-left">
+        <div class="flex items-baseline border-b border-slate-200/70 pb-3">
+          <span class="w-32 shrink-0 text-base md:text-lg font-bold text-[#0055b3]">Professor:</span>
+          <span class="text-base md:text-lg font-semibold text-slate-800" id="disp-prof">Aguardando reserva no portal...</span>
+        </div>
+        <div class="flex items-baseline border-b border-slate-200/70 pb-3">
+          <span class="w-32 shrink-0 text-base md:text-lg font-bold text-[#0055b3]">Conteúdo:</span>
+          <span class="text-base md:text-lg font-semibold text-slate-800" id="disp-conteudo">—</span>
+        </div>
+        <div class="flex items-baseline">
+          <span class="w-32 shrink-0 text-base md:text-lg font-bold text-[#0055b3]">Horário:</span>
+          <span class="text-base md:text-lg font-semibold text-slate-800" id="disp-horario">—</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="w-full flex flex-col items-center" id="secao-digitar-chave">
+      <h2 class="text-xs md:text-sm font-extrabold uppercase tracking-widest text-emerald-400 mb-3 text-center" id="titulo-chave">
+        DIGITE A CHAVE DE ACESSO DA AULA (OU CHAVE MESTRA ADM):
+      </h2>
+      <div class="bg-white/75 backdrop-blur-sm p-2.5 rounded-3xl border border-sky-400/40 shadow-sm mb-6">
+        <div class="flex items-center gap-2 md:gap-3" id="pin-container">
+          <input autocomplete="off" class="slot-input w-12 h-14 md:w-14 md:h-16 text-center text-xl md:text-2xl font-black bg-[#03204e] text-white rounded-xl border border-blue-900" data-index="0" maxlength="1" placeholder="—" type="password">
+          <input autocomplete="off" class="slot-input w-12 h-14 md:w-14 md:h-16 text-center text-xl md:text-2xl font-black bg-[#03204e] text-white rounded-xl border border-blue-900" data-index="1" maxlength="1" placeholder="—" type="password">
+          <input autocomplete="off" class="slot-input w-12 h-14 md:w-14 md:h-16 text-center text-xl md:text-2xl font-black bg-[#03204e] text-white rounded-xl border border-blue-900" data-index="2" maxlength="1" placeholder="—" type="password">
+          <input autocomplete="off" class="slot-input w-12 h-14 md:w-14 md:h-16 text-center text-xl md:text-2xl font-black bg-[#03204e] text-white rounded-xl border border-blue-900" data-index="3" maxlength="1" placeholder="—" type="password">
+          <input autocomplete="off" class="slot-input w-12 h-14 md:w-14 md:h-16 text-center text-xl md:text-2xl font-black bg-[#03204e] text-white rounded-xl border border-blue-900" data-index="4" maxlength="1" placeholder="—" type="password">
+          <input autocomplete="off" class="slot-input w-12 h-14 md:w-14 md:h-16 text-center text-xl md:text-2xl font-black bg-[#03204e] text-white rounded-xl border border-blue-900" data-index="5" maxlength="1" placeholder="—" type="password">
+        </div>
+      </div>
+      <button class="px-10 py-3.5 rounded-full bg-[#009245] text-white font-bold text-sm md:text-base tracking-wider uppercase shadow-lg cursor-pointer" id="unlock-btn" type="button">
+        DESBLOQUEAR MÁQUINA
+      </button>
+    </section>
+  </main>
+
+  <footer class="w-full flex items-center justify-between pt-4 relative z-10">
+    <div class="bg-white/75 backdrop-blur-md px-5 py-2 rounded-2xl text-xs font-black text-[#002e7a]">
+      Educação que transforma o futuro!
+    </div>
+    <div class="px-5 py-2 rounded-full bg-white/85 text-slate-800 text-sm font-bold shadow">
+      <span id="live-clock">--:--:--</span>
+    </div>
+  </footer>
+
+  <!-- MODAL DE SELEÇÃO DE SALA (NA PRIMEIRA INSTALAÇÃO OU DIGITANDO 000000) -->
+  <div id="modal-config-inicial" style="display: none; position: fixed; inset: 0; z-index: 100; background: rgba(15, 23, 42, 0.92); align-items: center; justify-content: center;">
+    <div style="background: #fff; border: 2px solid #0047ab; padding: 36px; border-radius: 28px; max-width: 480px; width: 90%; text-align: center;">
+      <h2 style="font-size: 22px; font-weight: 800; color: #002e7a; margin-bottom: 8px;">Instalação do Terminal STE</h2>
+      <p style="font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 24px;">Escolha a qual sala este computador pertence fisicamente:</p>
+      <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+        <button onclick="selecionarSalaSetup('STE1')" id="btn-setup-ste1" style="flex: 1; padding: 18px; border-radius: 16px; border: 2px solid #0047ab; background: #e0f2fe; color: #002e7a; font-weight: 800; cursor: pointer;">SALA STE 1</button>
+        <button onclick="selecionarSalaSetup('STE2')" id="btn-setup-ste2" style="flex: 1; padding: 18px; border-radius: 16px; border: 2px solid #cbd5e1; background: #f8fafc; color: #64748b; font-weight: 800; cursor: pointer;">SALA STE 2</button>
+      </div>
+      <button onclick="salvarConfiguracaoEIniciar()" style="width: 100%; padding: 16px; border-radius: 9999px; border: none; background: #009245; color: #fff; font-weight: 800; cursor: pointer;">SALVAR E INICIAR TERMINAL</button>
+    </div>
+  </div>
+
+  <script>
+    const ipc = window.require ? window.require('electron').ipcRenderer : null;
+
+    // 1. Configuração do Firebase (Mesmo Projeto do Portal Web)
+    const firebaseConfig = {
+      apiKey: "AIzaSyB1SeUi6PGBNA9zYC-j3gGaUXy1mqY2QhY",
+      authDomain: "portal-professor-yvypoty.firebaseapp.com",
+      projectId: "portal-professor-yvypoty",
+      storageBucket: "portal-professor-yvypoty.firebasestorage.app",
+      messagingSenderId: "172137915235",
+      appId: "1:172137915235:web:d07df7ea3ca39d7538a956"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // 2. Chave Mestra Offline (Coordenação / PCPI) e Código de Reconfiguração
+    const CHAVE_MESTRA_OFFLINE = "992026";
+    const CODIGO_SETUP_SALA = "000000";
+
+    // 3. Janelas de Horário das 8 Aulas
+    const HORARIOS_AULAS = [
+      { index: 0, label: "1ª Aula (07:00 - 07:55)", inicio: "07:00", fim: "07:55" },
+      { index: 1, label: "2ª Aula (07:55 - 08:50)", inicio: "07:55", fim: "08:50" },
+      { index: 2, label: "3ª Aula (09:10 - 10:05)", inicio: "09:10", fim: "10:05" },
+      { index: 3, label: "4ª Aula (10:05 - 11:00)", inicio: "10:05", fim: "11:00" },
+      { index: 4, label: "5ª Aula (12:30 - 13:20)", inicio: "12:30", fim: "13:20" },
+      { index: 5, label: "6ª Aula (13:20 - 14:10)", inicio: "13:20", fim: "14:10" },
+      { index: 6, label: "7ª Aula (14:10 - 15:05)", inicio: "14:10", fim: "15:05" },
+      { index: 7, label: "8ª Aula (15:15 - 16:15)", inicio: "15:15", fim: "16:15" }
+    ];
+
+    let salaConfigurada = "STE1";
+    let salaTemp = "STE1";
+    let agendamentosHojeSala = [];
+    let chavesValidasAgora = [];
+    let tipoUsoAgendado = "LIVRE";
+    let unsubscribeFirestore = null;
+
+    function getHojeISO() {
+      const d = new Date();
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0');
+    }
+
+    function getHoraAtualHHMM() {
+      const d = new Date();
+      return String(d.getHours()).padStart(2, '0') + ":" + String(d.getMinutes()).padStart(2, '0');
+    }
+
+    function iniciarEscutaFirestore(codigoSala) {
+      salaConfigurada = codigoSala;
+      const nomeFormatado = codigoSala === "STE1" ? "Sala STE 1" : "Sala STE 2";
+      document.getElementById('titulo-nome-sala').textContent = nomeFormatado;
+
+      if (unsubscribeFirestore) unsubscribeFirestore();
+
+      unsubscribeFirestore = db.collection("agendamentos")
+        .where("salaCodigo", "==", codigoSala)
+        .onSnapshot(snapshot => {
+          const hoje = getHojeISO();
+          agendamentosHojeSala = [];
+          snapshot.forEach(doc => {
+            const dados = doc.data();
+            if (dados.date === hoje) {
+              agendamentosHojeSala.push(dados);
+            }
+          });
+          atualizarPainelComReservaAtiva();
+        }, err => {
+          document.getElementById('badge-status-aula').textContent = "MODO OFFLINE — USE A CHAVE MESTRA ADM";
+        });
+    }
+
+    function atualizarPainelComReservaAtiva() {
+      const horaAtual = getHoraAtualHHMM();
+      const aulaAtualObj = HORARIOS_AULAS.find(h => horaAtual >= h.inicio && horaAtual <= h.fim);
+
+      // Procura agendamento do horário atual ou o próximo agendamento do dia nesta sala
+      let reservaAtiva = null;
+      if (aulaAtualObj) {
+        reservaAtiva = agendamentosHojeSala.find(b => Number(b.periodIndex) === aulaAtualObj.index);
+      }
+      if (!reservaAtiva && agendamentosHojeSala.length > 0) {
+        reservaAtiva = agendamentosHojeSala[0];
+      }
+
+      // Aceita qualquer chave gerada para esta sala específica na data de hoje
+      chavesValidasAgora = agendamentosHojeSala
+        .filter(b => b.accessKey && b.tipoUso === "COMPUTADORES")
+        .map(b => String(b.accessKey));
+
+      const badge = document.getElementById('badge-status-aula');
+
+      if (!reservaAtiva) {
+        tipoUsoAgendado = "LIVRE";
+        badge.textContent = "SALA SEM AGENDAMENTO ATIVO — BLOQUEADO";
+        badge.className = "inline-flex items-center justify-center px-7 py-2 rounded-full bg-slate-600 text-white font-bold text-xs md:text-sm tracking-wider uppercase shadow-md";
+        document.getElementById('disp-prof').textContent = "Nenhum agendamento para este horário";
+        document.getElementById('disp-conteudo').textContent = "Agende no Portal do Professor para gerar a chave";
+        document.getElementById('disp-horario').textContent = aulaAtualObj ? aulaAtualObj.label : "Fora do horário de aula";
+        return;
+      }
+
+      document.getElementById('disp-prof').textContent = reservaAtiva.teacherName || "Professor";
+      document.getElementById('disp-conteudo').textContent = (reservaAtiva.subject ? reservaAtiva.subject + " — " : "") + (reservaAtiva.content || "");
+      document.getElementById('disp-horario').textContent = reservaAtiva.periodName || "";
+      tipoUsoAgendado = reservaAtiva.tipoUso || "COMPUTADORES";
+
+      if (tipoUsoAgendado === "SALA") {
+        badge.textContent = "RESERVADO PARA REUNIÃO (APENAS SALA — PCs BLOQUEADOS)";
+        badge.className = "inline-flex items-center justify-center px-7 py-2 rounded-full bg-amber-500 text-white font-bold text-xs md:text-sm tracking-wider uppercase shadow-md";
+      } else {
+        badge.textContent = "AULA AGENDADA — DIGITE A CHAVE PARA LIBERAR";
+        badge.className = "inline-flex items-center justify-center px-7 py-2 rounded-full bg-[#009245] text-white font-bold text-xs md:text-sm tracking-wider uppercase shadow-md";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('.slot-input');
+      const unlockBtn = document.getElementById('unlock-btn');
+
+      if (ipc) {
+        ipc.send('solicitar-config-sala');
+        ipc.on('resposta-config-sala', (event, config) => {
+          if (!config || !config.sala_designada) {
+            document.getElementById('modal-config-inicial').style.display = 'flex';
+          } else {
+            iniciarEscutaFirestore(config.sala_designada);
+          }
+        });
+        ipc.on('config-salva-sucesso', (event, dados) => {
+          document.getElementById('modal-config-inicial').style.display = 'none';
+          iniciarEscutaFirestore(dados.sala_designada);
+        });
+      } else {
+        const savedLocal = localStorage.getItem('ste_kiosk_room');
+        if (!savedLocal) {
+          document.getElementById('modal-config-inicial').style.display = 'flex';
+        } else {
+          iniciarEscutaFirestore(savedLocal);
+        }
+      }
+
+      if (inputs.length > 0) inputs[0].focus();
+
+      inputs.forEach((input, idx) => {
+        input.addEventListener('input', (e) => {
+          if (e.target.value.length > 0 && idx < inputs.length - 1) inputs[idx + 1].focus();
+        });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !input.value && idx > 0) inputs[idx - 1].focus();
+          else if (e.key === 'Enter') triggerUnlock();
+        });
+        input.addEventListener('focus', () => input.select());
+      });
+
+      function limparCampos() {
+        inputs.forEach(i => i.value = '');
+        inputs[0].focus();
+      }
+
+      function triggerUnlock() {
+        let code = '';
+        inputs.forEach(i => code += i.value);
+
+        // 1. Código 000000: Abre modal para trocar entre STE 1 e STE 2
+        if (code === CODIGO_SETUP_SALA) {
+          limparCampos();
+          document.getElementById('modal-config-inicial').style.display = 'flex';
+          return;
+        }
+
+        // 2. Chave Mestra Offline (992026): Desbloqueia sempre (com ou sem internet, mesmo em modo SALA)
+        const isMasterKey = (code === CHAVE_MESTRA_OFFLINE);
+
+        if (!isMasterKey && tipoUsoAgendado === "SALA") {
+          unlockBtn.textContent = 'COMPUTADORES BLOQUEADOS (USO APENAS SALA)';
+          setTimeout(() => { unlockBtn.textContent = 'DESBLOQUEAR MÁQUINA'; limparCampos(); }, 2000);
+          return;
+        }
+
+        if (isMasterKey || chavesValidasAgora.includes(code)) {
+          unlockBtn.textContent = isMasterKey ? 'CHAVE MESTRA ACEITA — LIBERANDO...' : 'ACESSO CONCEDIDO — LIBERANDO...';
+          limparCampos();
+          if (ipc) {
+            setTimeout(() => ipc.send('desbloquear-computador'), 600);
+          }
+        } else {
+          unlockBtn.textContent = 'CHAVE INCORRETA OU FORA DO HORÁRIO';
+          setTimeout(() => { unlockBtn.textContent = 'DESBLOQUEAR MÁQUINA'; limparCampos(); }, 1600);
+        }
+      }
+
+      unlockBtn.addEventListener('click', triggerUnlock);
+    });
+
+    function selecionarSalaSetup(sala) {
+      salaTemp = sala;
+      const b1 = document.getElementById('btn-setup-ste1');
+      const b2 = document.getElementById('btn-setup-ste2');
+      if (sala === 'STE1') {
+        b1.style.borderColor = "#0047ab"; b1.style.background = "#e0f2fe"; b1.style.color = "#002e7a";
+        b2.style.borderColor = "#cbd5e1"; b2.style.background = "#f8fafc"; b2.style.color = "#64748b";
+      } else {
+        b2.style.borderColor = "#0047ab"; b2.style.background = "#e0f2fe"; b2.style.color = "#002e7a";
+        b1.style.borderColor = "#cbd5e1"; b1.style.background = "#f8fafc"; b1.style.color = "#64748b";
+      }
+    }
+
+    function salvarConfiguracaoEIniciar() {
+      if (ipc) {
+        ipc.send('salvar-config-sala', salaTemp);
+      } else {
+        localStorage.setItem('ste_kiosk_room', salaTemp);
+        document.getElementById('modal-config-inicial').style.display = 'none';
+        iniciarEscutaFirestore(salaTemp);
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      const dia = String(now.getDate()).padStart(2, '0');
+      const mes = String(now.getMonth() + 1).padStart(2, '0');
+      const ano = now.getFullYear();
+      document.getElementById('live-clock').textContent = h + ":" + m + ":" + s + " — " + dia + "/" + mes + "/" + ano;
+    }
+    setInterval(updateClock, 1000);
+    setInterval(atualizarPainelComReservaAtiva, 30000);
+    updateClock();
+  <\/script>
+</body>
+</html>`;
+            }
+
+            const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            showToast(`Arquivo "${filename}" do Kiosk STE baixado com sucesso!`);
         }
 
         // 8. APCs DO PROFESSOR (COM ENVIO GOOGLE DRIVE APPS SCRIPT)
